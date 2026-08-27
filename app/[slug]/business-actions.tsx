@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLang } from "@/lib/lang-context";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://zertooeats.com";
 
@@ -19,6 +20,8 @@ export default function BusinessActions({
   longitude: number | null;
   googleMapsUrl: string | null;
 }) {
+  const { t } = useLang();
+
   // navigator.share no existe en el servidor — se revisa recién
   // montado, para no arriesgar un desajuste entre lo que se renderiza
   // en el servidor y lo que ve el navegador (mismo criterio que usamos
@@ -29,7 +32,7 @@ export default function BusinessActions({
   }, []);
 
   const shareUrl = `${SITE_URL}/${slug}`;
-  const shareText = `Mirá ${name} en Zertoo Eats`;
+  const shareText = t.actions.shareText(name);
 
   // Orden de prioridad: 1) el link de Google Maps que el propio
   // negocio cargó a mano (el más preciso, es su pin real) — 2) si no
@@ -65,7 +68,7 @@ export default function BusinessActions({
           className="flex-1 min-w-[140px] flex items-center justify-center gap-1.5 text-sm font-semibold px-4 py-3 rounded-xl bg-graphite text-white hover:brightness-110"
         >
           <span aria-hidden>📍</span>
-          Cómo llegar
+          {t.actions.directions}
         </a>
       )}
       <a
@@ -74,14 +77,14 @@ export default function BusinessActions({
         rel="noopener noreferrer"
         className="flex-1 min-w-[140px] text-center text-sm font-semibold px-4 py-3 rounded-xl bg-[#25D366] text-white hover:brightness-105"
       >
-        Compartir por WhatsApp
+        {t.actions.shareWhatsapp}
       </a>
       {canNativeShare && (
         <button
           onClick={handleNativeShare}
           className="flex-1 min-w-[140px] text-center text-sm font-semibold px-4 py-3 rounded-xl border border-graphite/15 text-graphite hover:bg-graphite/5"
         >
-          Compartir
+          {t.actions.share}
         </button>
       )}
     </div>

@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { CATEGORY_LABELS } from "@/lib/categories";
+import { useLang } from "@/lib/lang-context";
 
 export interface BusinessCardData {
   id: string;
@@ -15,6 +18,8 @@ export interface BusinessCardData {
 }
 
 export default function BusinessCard({ tenant }: { tenant: BusinessCardData }) {
+  const { lang } = useLang();
+
   return (
     <Link
       href={`/${tenant.slug}`}
@@ -33,7 +38,7 @@ export default function BusinessCard({ tenant }: { tenant: BusinessCardData }) {
         <div className="flex items-center gap-2 text-xs text-graphite/60 mt-0.5">
           {tenant.nowCategory && (
             <span className="bg-[#F7F8F4] px-2 py-0.5 rounded-full font-medium">
-              {CATEGORY_LABELS[tenant.nowCategory] ?? tenant.nowCategory}
+              {CATEGORY_LABELS[lang][tenant.nowCategory] ?? tenant.nowCategory}
             </span>
           )}
           {tenant.avgRating !== null && (

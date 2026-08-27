@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useLang } from "@/lib/lang-context";
 
 export default function NearMeButton({ active }: { active: boolean }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useLang();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,7 +22,7 @@ export default function NearMeButton({ active }: { active: boolean }) {
     }
 
     if (!navigator.geolocation) {
-      setError("Tu navegador no permite compartir ubicación.");
+      setError(t.nearMe.noGeolocation);
       return;
     }
 
@@ -35,7 +37,7 @@ export default function NearMeButton({ active }: { active: boolean }) {
         setLoading(false);
       },
       () => {
-        setError("No pudimos acceder a tu ubicación — revisá el permiso en tu navegador.");
+        setError(t.nearMe.denied);
         setLoading(false);
       },
       { timeout: 10_000 }
@@ -51,7 +53,7 @@ export default function NearMeButton({ active }: { active: boolean }) {
           active ? "bg-lime text-graphite" : "bg-white text-graphite/70 hover:bg-graphite/5"
         }`}
       >
-        📍 {loading ? "Buscando tu ubicación..." : active ? "Cerca de mí ✓" : "Cerca de mí"}
+        📍 {loading ? t.nearMe.searching : active ? t.nearMe.activeLabel : t.nearMe.label}
       </button>
       {error && <p className="text-[11px] text-red-600 px-1">{error}</p>}
     </div>

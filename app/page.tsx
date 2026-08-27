@@ -1,8 +1,7 @@
 import { db } from "@/lib/db";
 import type { NowCategory } from "@prisma/client";
 import { CATEGORY_LABELS } from "@/lib/categories";
-import NearMeButton from "./near-me-button";
-import BusinessList from "./business-list";
+import HomeContent from "./home-content";
 
 // Fuerza que esto se genere en cada visita (tiempo de ejecución), NO
 // durante `next build` — la base de datos solo es alcanzable en
@@ -24,6 +23,13 @@ function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number): nu
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
+// El ORDEN de las categorías disponibles se calcula acá (servidor,
+// usando las etiquetas en español como criterio de orden alfabético)
+// — no cambia según el idioma elegido, solo la ETIQUETA que se
+// muestra cambia (eso sí depende del idioma, y se resuelve en
+// HomeContent). Es una decisión menor: el orden de las categorías es
+// el mismo sin importar el idioma, en vez de reordenarse alfabético
+// en cada idioma por separado.
 export default async function HomePage({
   searchParams,
 }: {
@@ -40,7 +46,7 @@ export default async function HomePage({
   // hoy no hay ningún negocio de sushi.
   const availableCategories = Array.from(
     new Set(allTenants.map((t) => t.nowCategory).filter((c): c is NowCategory => Boolean(c)))
-  ).sort((a, b) => (CATEGORY_LABELS[a] ?? a).localeCompare(CATEGORY_LABELS[b] ?? b));
+  ).sort((a, b) => (CATEGORY_LABELS.es[a] ?? a).localeCompare(CATEGORY_LABELS.es[b] ?? b));
 
   const selectedCategory = searchParams.category;
   const filteredTenants = selectedCategory
@@ -94,66 +100,15 @@ export default async function HomePage({
   const rest = withRatings.filter((t) => !t.nowFeatured);
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5]">
-      <header className="bg-[#e4f73e] px-5 py-6 sticky top-0 z-10">
-        <div className="max-w-xl mx-auto flex flex-col items-center text-center">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.svg" alt="Zertoo Eats" className="h-16 w-auto" />
-          <p className="text-sm text-graphite/70 mt-1">Descubre dónde comer, ahora mismo</p>
-        </div>
-      </header>
-
-      <div className="max-w-xl mx-auto px-5 pt-5 flex flex-wrap items-start gap-2">
-        <a
-          href="/"
-          className={`text-xs font-semibold px-3 py-1.5 rounded-full transition-colors ${
-            !selectedCategory ? "bg-graphite text-white" : "bg-white text-graphite/70 hover:bg-graphite/5"
-          }`}
-        >
-          Todas
-        </a>
-        {availableCategories.map((cat) => (
-          <a
-            key={cat}
-            href={`/?category=${cat}`}
-            className={`text-xs font-semibold px-3 py-1.5 rounded-full transition-colors ${
-              selectedCategory === cat ? "bg-graphite text-white" : "bg-white text-graphite/70 hover:bg-graphite/5"
-            }`}
-          >
-            {CATEGORY_LABELS[cat] ?? cat}
-          </a>
-        ))}
-        <NearMeButton active={nearMeActive} />
-      </div>
-
-      <main className="max-w-xl mx-auto px-5 py-6 flex flex-col gap-5">
-        {filteredTenants.length === 0 && allTenants.length > 0 && (
-          <p className="text-sm text-graphite/60 text-center py-16">
-            Ningún negocio en esa categoría todavía —{" "}
-            <a href="/" className="underline font-medium">
-              ver todos
-            </a>
-            .
-          </p>
-        )}
-        {allTenants.length === 0 && (
-          <p className="text-sm text-graphite/60 text-center py-16">
-            Todavía no hay negocios en Zertoo Eats — pronto vas a ver acá los mejores lugares.
-          </p>
-        )}
-
-        {filteredTenants.length > 0 && (
-          <BusinessList
-            nearMeActive={nearMeActive}
-            byDistance={byDistance}
-            featured={featured}
-            rest={rest}
-            hasAnyTenants={filteredTenants.length > 0}
-          />
-        )}
-      </main>
-
-      <footer className="text-center py-8 text-xs text-graphite/40">Un producto de Zertoo</footer>
-    </div>
+    <HomeContent
+      availableCategories={availableCategories}
+      selectedCategory={selectedCategory}
+      allTenantsCount={allTenants.length}
+      filteredTenantsCount={filteredTenants.length}
+      nearMeActive={nearMeActive}
+      byDistance={byDistance}
+      featured={featured}
+      rest={rest}
+    />
   );
 }
