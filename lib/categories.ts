@@ -25,13 +25,6 @@ export const CATEGORY_LABELS: Record<string, string> = {
   BAR_PUB: "Bar & Pub",
   BEACH_BAR: "Beach Bar",
   FOOD_TRUCK: "Food Truck",
-  // Temporales — ver la nota en prisma/schema.prisma. Mientras algún
-  // negocio no se haya migrado a la lista nueva, esto evita que su
-  // categoría se vea como el texto crudo "CRIOLLA" en vez de un
-  // nombre legible.
-  CRIOLLA: "Criolla",
-  CAFE_DESSERTS: "Café y postres",
-  VEGETARIAN: "Vegetariana",
 };
 
 // Zertoo Eats es solo para restaurantes — este segundo nivel de

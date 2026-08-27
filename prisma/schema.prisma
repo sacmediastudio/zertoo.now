@@ -56,10 +56,6 @@ enum NowCategory {
   BAR_PUB
   BEACH_BAR
   FOOD_TRUCK
-  // ⚠️ TEMPORAL — no quitar todavía, ver la nota en saas-platform/prisma/schema.prisma.
-  CRIOLLA
-  CAFE_DESSERTS
-  VEGETARIAN
 }
 
 enum ReviewStatus {
