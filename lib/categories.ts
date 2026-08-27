@@ -1,16 +1,36 @@
 export const CATEGORY_LABELS: Record<string, string> = {
   ITALIAN: "Italiana",
   FRENCH: "Francesa",
+  LOCAL: "Local",
+  COLOMBIAN: "Colombiana",
+  MEXICAN: "Mexicana",
   INTERNATIONAL: "Internacional",
   ASIAN: "Asiática",
-  CRIOLLA: "Criolla",
+  JAPANESE: "Japonesa",
+  CHINESE: "China",
+  INDIAN: "India",
   STEAKHOUSE: "Steakhouse",
   SEAFOOD: "Mariscos",
-  FAST_FOOD: "Comida rápida",
-  CAFE_DESSERTS: "Café y postres",
-  PIZZERIA: "Pizzería",
   SUSHI: "Sushi",
-  BAR_PUB: "Bar",
+  PIZZERIA: "Pizzería",
+  BURGERS: "Hamburguesas",
+  FAST_FOOD: "Comida rápida",
+  BBQ_GRILL: "BBQ & Grill",
+  CAFE: "Café",
+  BAKERY_PASTRY: "Bakery & Pastry",
+  BREAKFAST_BRUNCH: "Desayuno & Brunch",
+  ICE_CREAM_GELATO: "Helados & Gelato",
+  DESSERTS: "Postres",
+  VEGETARIAN_VEGAN: "Vegetariana & Vegana",
+  BAR_PUB: "Bar & Pub",
+  BEACH_BAR: "Beach Bar",
+  FOOD_TRUCK: "Food Truck",
+  // Temporales — ver la nota en prisma/schema.prisma. Mientras algún
+  // negocio no se haya migrado a la lista nueva, esto evita que su
+  // categoría se vea como el texto crudo "CRIOLLA" en vez de un
+  // nombre legible.
+  CRIOLLA: "Criolla",
+  CAFE_DESSERTS: "Café y postres",
   VEGETARIAN: "Vegetariana",
 };
 
