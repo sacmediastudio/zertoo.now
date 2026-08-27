@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import type { NowCategory } from "@prisma/client";
 import NearMeButton from "./near-me-button";
 
 // Fuerza que esto se genere en cada visita (tiempo de ejecución), NO
@@ -57,7 +58,7 @@ export default async function HomePage({
   // algún negocio activo — no tiene sentido dejar elegir "Sushi" si
   // hoy no hay ningún negocio de sushi.
   const availableCategories = Array.from(
-    new Set(allTenants.map((t) => t.nowCategory).filter((c): c is string => Boolean(c)))
+    new Set(allTenants.map((t) => t.nowCategory).filter((c): c is NowCategory => Boolean(c)))
   ).sort((a, b) => (CATEGORY_LABELS[a] ?? a).localeCompare(CATEGORY_LABELS[b] ?? b));
 
   const selectedCategory = searchParams.category;
