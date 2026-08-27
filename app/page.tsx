@@ -1,5 +1,7 @@
+import Link from "next/link";
 import { db } from "@/lib/db";
 import type { NowCategory } from "@prisma/client";
+import { CATEGORY_LABELS } from "@/lib/categories";
 import NearMeButton from "./near-me-button";
 
 // Fuerza que esto se genere en cada visita (tiempo de ejecución), NO
@@ -7,27 +9,6 @@ import NearMeButton from "./near-me-button";
 // tiempo de ejecución (red privada de Railway), mismo motivo por el
 // que el sitemap del proyecto principal necesitó este mismo fix.
 export const dynamic = "force-dynamic";
-
-const CATEGORY_LABELS: Record<string, string> = {
-  ITALIAN: "Italiana",
-  FRENCH: "Francesa",
-  INTERNATIONAL: "Internacional",
-  ASIAN: "Asiática",
-  CRIOLLA: "Criolla",
-  STEAKHOUSE: "Steakhouse",
-  SEAFOOD: "Mariscos",
-  FAST_FOOD: "Comida rápida",
-  CAFE_DESSERTS: "Café y postres",
-  PIZZERIA: "Pizzería",
-  SUSHI: "Sushi",
-  BAR_PUB: "Bar",
-  VEGETARIAN: "Vegetariana",
-  HAIR_SALON: "Peluquería",
-  NAIL_SALON: "Salón de uñas",
-  SPA_WELLNESS: "Spa y bienestar",
-  BARBERSHOP: "Barbería",
-  OTHER_SERVICES: "Otros servicios",
-};
 
 // Distancia entre dos puntos en la Tierra, en km — cálculo puro, sin
 // necesidad de ningún servicio externo (la geocodificación de la
@@ -209,7 +190,10 @@ function BusinessCard({
   };
 }) {
   return (
-    <div className="bg-white rounded-2xl shadow-[0_4px_20px_-8px_rgba(0,0,0,0.12)] overflow-hidden flex items-center gap-4 p-4">
+    <Link
+      href={`/${tenant.slug}`}
+      className="bg-white rounded-2xl shadow-[0_4px_20px_-8px_rgba(0,0,0,0.12)] overflow-hidden flex items-center gap-4 p-4 hover:brightness-[0.98] transition-[filter]"
+    >
       {tenant.logoUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={tenant.logoUrl} alt={tenant.name} className="w-14 h-14 rounded-xl object-cover shrink-0" />
@@ -239,6 +223,6 @@ function BusinessCard({
         </div>
         {tenant.address && <p className="text-xs text-graphite/50 truncate mt-1">{tenant.address}</p>}
       </div>
-    </div>
+    </Link>
   );
 }
