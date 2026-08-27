@@ -56,6 +56,14 @@ enum ReviewStatus {
   REPORTED
 }
 
+// Mismos 3 valores exactos que el enum real en saas-platform — tiene
+// que coincidir, porque apunta a la misma columna real.
+enum BusinessType {
+  RESTAURANT
+  SMALL_BUSINESS
+  SMARTLINK
+}
+
 // Subconjunto de Tenant — solo los campos que Zertoo Now muestra o
 // filtra. El resto de columnas reales (facturación, WhatsApp, etc.)
 // existen en la base de datos igual, simplemente este proyecto no
@@ -64,6 +72,7 @@ model Tenant {
   id           String       @id @default(cuid())
   name         String
   slug         String       @unique
+  businessType BusinessType
   logoUrl      String?
   heroImageUrl String?
   address      String?

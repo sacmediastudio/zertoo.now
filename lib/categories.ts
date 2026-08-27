@@ -18,3 +18,13 @@ export const CATEGORY_LABELS: Record<string, string> = {
   BARBERSHOP: "Barbería",
   OTHER_SERVICES: "Otros servicios",
 };
+
+// Para que buscar "restaurantes" encuentre cualquier negocio de ese
+// tipo, sin importar su categoría específica (que puede ser
+// "Steakhouse", "Criolla", etc.) — un segundo nivel de texto buscable,
+// más general que la categoría.
+export const BUSINESS_TYPE_LABELS: Record<string, string> = {
+  RESTAURANT: "Restaurante",
+  SMALL_BUSINESS: "Citas y servicios",
+  SMARTLINK: "Smartlink",
+};
