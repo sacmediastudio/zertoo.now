@@ -12,19 +12,14 @@ export const CATEGORY_LABELS: Record<string, string> = {
   SUSHI: "Sushi",
   BAR_PUB: "Bar",
   VEGETARIAN: "Vegetariana",
-  HAIR_SALON: "Peluquería",
-  NAIL_SALON: "Salón de uñas",
-  SPA_WELLNESS: "Spa y bienestar",
-  BARBERSHOP: "Barbería",
-  OTHER_SERVICES: "Otros servicios",
 };
 
-// Para que buscar "restaurantes" encuentre cualquier negocio de ese
-// tipo, sin importar su categoría específica (que puede ser
-// "Steakhouse", "Criolla", etc.) — un segundo nivel de texto buscable,
-// más general que la categoría.
+// Zertoo Eats es solo para restaurantes — este segundo nivel de
+// búsqueda (para "restaurantes" encuentre cualquiera sin importar su
+// categoría específica) queda con un solo valor por ahora, pero se
+// deja el mecanismo armado por si en algún momento se suma otro tipo
+// de negocio de comida (ej. food trucks) que también valga la pena
+// distinguir así.
 export const BUSINESS_TYPE_LABELS: Record<string, string> = {
   RESTAURANT: "Restaurante",
-  SMALL_BUSINESS: "Citas y servicios",
-  SMARTLINK: "Smartlink",
 };

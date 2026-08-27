@@ -3,7 +3,7 @@
 // Este proyecto comparte la MISMA base de datos que el proyecto
 // principal de Zertoo (saas-platform) — no es una base de datos
 // propia. Este archivo declara SOLO el subconjunto de modelos y
-// campos que Zertoo Now necesita leer/escribir — a propósito NO
+// campos que Zertoo Eats necesita leer/escribir — a propósito NO
 // incluye toda la tabla real completa (que tiene muchos más campos
 // del lado del proyecto principal).
 //
@@ -15,7 +15,7 @@
 //      corresponde correr eso es en saas-platform.
 //   2. Si el proyecto principal le agrega un campo NUEVO a Tenant o
 //      Review, este archivo no se entera solo — hay que copiarlo acá
-//      a mano si Zertoo Now también lo va a usar.
+//      a mano si Zertoo Eats también lo va a usar.
 //   3. Los nombres de campo/tabla (@map, @@map) tienen que coincidir
 //      EXACTO con saas-platform/prisma/schema.prisma, porque apuntan
 //      a las mismas columnas reales.
@@ -43,11 +43,6 @@ enum NowCategory {
   SUSHI
   BAR_PUB
   VEGETARIAN
-  HAIR_SALON
-  NAIL_SALON
-  SPA_WELLNESS
-  BARBERSHOP
-  OTHER_SERVICES
 }
 
 enum ReviewStatus {
@@ -64,7 +59,7 @@ enum BusinessType {
   SMARTLINK
 }
 
-// Subconjunto de Tenant — solo los campos que Zertoo Now muestra o
+// Subconjunto de Tenant — solo los campos que Zertoo Eats muestra o
 // filtra. El resto de columnas reales (facturación, WhatsApp, etc.)
 // existen en la base de datos igual, simplemente este proyecto no
 // necesita saber de ellas.

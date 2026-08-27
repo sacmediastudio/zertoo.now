@@ -1,8 +1,15 @@
-# Zertoo Now!
+# Zertoo Eats!
 
-Directorio público de descubrimiento — un proyecto **separado** del
-Zertoo principal (`saas-platform`), pensado para vivir en su propio
-subdominio (`now.zertoo.app`), con su propio servicio en Railway.
+Directorio de restaurantes — un proyecto **separado** del Zertoo
+principal (`saas-platform`), pensado para vivir en su propio
+subdominio, con su propio servicio en Railway.
+
+> **Antes se llamaba "Zertoo Now"** y cubría también Citas/servicios
+> (peluquerías, spas, etc.) — el usuario decidió reenfocarlo
+> exclusivamente en restaurantes y renombrarlo a "Zertoo Eats". El
+> dominio (`now.zertoo.app`) se mantiene igual por ahora a propósito —
+> cambiarlo es un paso de infraestructura aparte (DNS + Railway) que
+> no se hizo todavía.
 
 ## ⚠️ Comparte la base de datos con el proyecto principal
 
@@ -18,19 +25,26 @@ la misma que `saas-platform`, mediante la misma variable
   tiene que hacerse desde `saas-platform`, que es el único lugar
   donde corresponde correr eso.
 - Si `saas-platform` le agrega un campo nuevo a `Tenant` o `Review`
-  que Zertoo Now también necesite usar, hay que copiarlo a mano acá
+  que Zertoo Eats también necesite usar, hay que copiarlo a mano acá
   en `prisma/schema.prisma` — no se entera solo.
 
-## Qué incluye esta primera versión
+## Qué incluye esta versión
 
 - Lista los negocios con `nowEnabled = true`, agrupados en
   "Destacados" (los que el admin marcó con `nowFeatured`, desde
-  `/admin/now` en el proyecto principal) y el resto
+  `/admin/now` en el proyecto principal) y el resto. **Solo
+  restaurantes** — el enum `NowCategory` no tiene categorías de
+  Citas/servicios.
 - Muestra categoría y calificación promedio (de las reseñas ya
   publicadas)
 - **Filtro por categoría** — solo se muestran como opción las
   categorías que de verdad tienen algún negocio activo, vía
   `?category=X` en la URL (compartible, indexable)
+- **Buscador de texto libre** — filtra en tiempo real (sin recargar)
+  por nombre del negocio, categoría específica, o tipo de negocio en
+  general (`lib/categories.ts` → `BUSINESS_TYPE_LABELS`, hoy con un
+  solo valor ya que todo es `RESTAURANT`, pero el mecanismo queda
+  listo por si en el futuro se suma otro tipo de negocio de comida)
 - **"Cerca de mí"** — pide la ubicación del navegador (con permiso
   explícito, un botón, nunca automático), y reordena por distancia
   real (fórmula de Haversine, calculado acá mismo, sin depender de
@@ -39,15 +53,22 @@ la misma que `saas-platform`, mediante la misma variable
   dos criterios de orden distintos que podrían contradecirse. Los
   negocios sin coordenadas todavía (no geocodificados — ver el README
   del proyecto principal) quedan al final del listado.
+- **Página de detalle por negocio** (`/[slug]`) — con botón "Cómo
+  llegar" (Google Maps, con coordenadas o dirección de texto según lo
+  que haya disponible), "Compartir por WhatsApp", y compartir nativo
+  del teléfono (solo si el navegador lo soporta). Las tarjetas del
+  listado principal llevan acá.
 - Usa los mismos colores de marca que el resto de Zertoo
 
 ## Lo que todavía falta (próximas etapas)
 
-- Botones de "Cómo llegar" y compartir por WhatsApp en cada negocio
 - El botón "Share this moment" en el menú/perfil público, y la
   bandeja de aprobación de fotos en el dashboard de cada negocio, y
   que el admin de Zertoo pueda borrar una foto (`Moment`) si hiciera
   falta (el modelo ya existe, falta toda esta funcionalidad)
+- Cambiar el dominio de `now.zertoo.app` a algo con "eats" (ej.
+  `eats.zertoo.app`) — pendiente de que el usuario decida, requiere
+  configurar DNS + Railway de nuevo
 
 ## Variables de entorno
 

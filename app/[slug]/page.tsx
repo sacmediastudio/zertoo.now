@@ -12,10 +12,10 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     where: { slug: params.slug },
     select: { name: true, logoUrl: true, heroImageUrl: true, nowEnabled: true },
   });
-  if (!tenant || !tenant.nowEnabled) return { title: "Zertoo Now!" };
+  if (!tenant || !tenant.nowEnabled) return { title: "Zertoo Eats!" };
 
-  const title = `${tenant.name} | Zertoo Now!`;
-  const description = `Mirá ${tenant.name} en Zertoo Now — recomendaciones, calificación y cómo llegar.`;
+  const title = `${tenant.name} | Zertoo Eats!`;
+  const description = `Mirá ${tenant.name} en Zertoo Eats — recomendaciones, calificación y cómo llegar.`;
   const image = tenant.heroImageUrl || tenant.logoUrl || undefined;
 
   return {
@@ -41,7 +41,7 @@ export default async function BusinessPage({ params }: { params: { slug: string 
       <header className="bg-graphite text-white px-5 py-6">
         <div className="max-w-xl mx-auto">
           <Link href="/" className="text-sm text-white/70 hover:text-white">
-            ← Zertoo Now
+            ← Zertoo Eats
           </Link>
         </div>
       </header>

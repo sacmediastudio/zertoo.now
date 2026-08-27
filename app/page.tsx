@@ -87,9 +87,9 @@ export default async function HomePage({
       <header className="bg-graphite text-white px-5 py-6 sticky top-0 z-10">
         <div className="max-w-xl mx-auto">
           <h1 className="text-2xl font-extrabold tracking-tight">
-            Zertoo <span className="text-lime">Now!</span>
+            Zertoo <span className="text-lime">Eats!</span>
           </h1>
-          <p className="text-sm text-white/70 mt-1">Descubre dónde ir, ahora mismo</p>
+          <p className="text-sm text-white/70 mt-1">Descubre dónde comer, ahora mismo</p>
         </div>
       </header>
 
@@ -128,7 +128,7 @@ export default async function HomePage({
         )}
         {allTenants.length === 0 && (
           <p className="text-sm text-graphite/60 text-center py-16">
-            Todavía no hay negocios en Zertoo Now — pronto vas a ver acá los mejores lugares.
+            Todavía no hay negocios en Zertoo Eats — pronto vas a ver acá los mejores lugares.
           </p>
         )}
 

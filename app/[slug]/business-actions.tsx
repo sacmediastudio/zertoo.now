@@ -27,7 +27,7 @@ export default function BusinessActions({
   }, []);
 
   const shareUrl = `${SITE_URL}/${slug}`;
-  const shareText = `Mirá ${name} en Zertoo Now`;
+  const shareText = `Mirá ${name} en Zertoo Eats`;
 
   // Con coordenadas reales (ya geocodificadas) o, si todavía no las
   // tiene, con la dirección de texto tal cual — Google Maps acepta las
