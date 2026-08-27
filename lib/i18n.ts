@@ -92,4 +92,4 @@ export const translations = {
       shareText: (name: string) => `Check out ${name} on Zertoo Eats`,
     },
   },
-} as const;
+};
