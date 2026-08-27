@@ -38,39 +38,60 @@ export default async function BusinessPage({ params }: { params: { slug: string 
 
   return (
     <div className="min-h-screen bg-[#F5F5F5]">
-      <header className="bg-graphite text-white px-5 py-6">
+      <header className="bg-[#e4f73e] px-5 py-6">
         <div className="max-w-xl mx-auto">
-          <Link href="/" className="text-sm text-white/70 hover:text-white">
+          <Link href="/" className="text-sm text-graphite/70 hover:text-graphite">
             ← Zertoo Eats
           </Link>
         </div>
       </header>
 
       <main className="max-w-xl mx-auto px-5 py-6 flex flex-col gap-5">
-        <div className="bg-white rounded-2xl shadow-[0_4px_20px_-8px_rgba(0,0,0,0.12)] p-6 flex flex-col items-center text-center">
-          {tenant.logoUrl ? (
+        <div className="bg-white rounded-2xl shadow-[0_4px_20px_-8px_rgba(0,0,0,0.12)] overflow-hidden flex flex-col items-center text-center">
+          {tenant.heroImageUrl ? (
+            <div className="relative w-full aspect-square">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={tenant.heroImageUrl} alt="" className="absolute inset-0 w-full h-full object-cover" />
+              <div className="absolute top-5 left-1/2 -translate-x-1/2">
+                {tenant.logoUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={tenant.logoUrl}
+                    alt={tenant.name}
+                    className="w-20 h-20 rounded-2xl object-cover border-2 border-white shadow-lg"
+                  />
+                ) : (
+                  <div className="w-20 h-20 rounded-2xl bg-graphite text-white flex items-center justify-center text-2xl font-bold border-2 border-white shadow-lg">
+                    {tenant.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : tenant.logoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={tenant.logoUrl} alt={tenant.name} className="w-20 h-20 rounded-2xl object-cover mb-4" />
+            <img src={tenant.logoUrl} alt={tenant.name} className="w-20 h-20 rounded-2xl object-cover mt-6" />
           ) : (
-            <div className="w-20 h-20 rounded-2xl bg-graphite text-white flex items-center justify-center text-2xl font-bold mb-4">
+            <div className="w-20 h-20 rounded-2xl bg-graphite text-white flex items-center justify-center text-2xl font-bold mt-6">
               {tenant.name.charAt(0).toUpperCase()}
             </div>
           )}
-          <p className="text-xl font-bold text-graphite">{tenant.name}</p>
-          <div className="flex items-center gap-2 text-sm text-graphite/60 mt-2">
-            {tenant.nowCategory && (
-              <span className="bg-[#F7F8F4] px-2.5 py-1 rounded-full font-medium">
-                {CATEGORY_LABELS[tenant.nowCategory] ?? tenant.nowCategory}
-              </span>
-            )}
-            {avgRating !== null && (
-              <span>
-                ★ {avgRating.toFixed(1)} ({tenant.reviews.length})
-              </span>
-            )}
+          <div className="p-6 pt-4 flex flex-col items-center text-center w-full">
+            <p className="text-xl font-bold text-graphite">{tenant.name}</p>
+            <div className="flex items-center gap-2 text-sm text-graphite/60 mt-2">
+              {tenant.nowCategory && (
+                <span className="bg-[#F7F8F4] px-2.5 py-1 rounded-full font-medium">
+                  {CATEGORY_LABELS[tenant.nowCategory] ?? tenant.nowCategory}
+                </span>
+              )}
+              {avgRating !== null && (
+                <span>
+                  ★ {avgRating.toFixed(1)} ({tenant.reviews.length})
+                </span>
+              )}
+            </div>
+            {tenant.address && <p className="text-sm text-graphite/60 mt-3">{tenant.address}</p>}
+            {tenant.contactPhone && <p className="text-sm text-graphite/60 mt-1">{tenant.contactPhone}</p>}
           </div>
-          {tenant.address && <p className="text-sm text-graphite/60 mt-3">{tenant.address}</p>}
-          {tenant.contactPhone && <p className="text-sm text-graphite/60 mt-1">{tenant.contactPhone}</p>}
         </div>
 
         <BusinessActions

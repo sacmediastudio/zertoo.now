@@ -56,9 +56,10 @@ export default function BusinessActions({
           href={directionsUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex-1 min-w-[140px] text-center text-sm font-semibold px-4 py-3 rounded-xl bg-graphite text-white hover:brightness-110"
+          className="flex-1 min-w-[140px] flex items-center justify-center gap-1.5 text-sm font-semibold px-4 py-3 rounded-xl bg-graphite text-white hover:brightness-110"
         >
-          📍 Cómo llegar
+          <span aria-hidden>📍</span>
+          Cómo llegar
         </a>
       )}
       <a
