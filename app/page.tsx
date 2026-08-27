@@ -84,12 +84,11 @@ export default async function HomePage({
 
   return (
     <div className="min-h-screen bg-[#F5F5F5]">
-      <header className="bg-graphite text-white px-5 py-6 sticky top-0 z-10">
+      <header className="bg-[#e4f73e] px-5 py-6 sticky top-0 z-10">
         <div className="max-w-xl mx-auto">
-          <h1 className="text-2xl font-extrabold tracking-tight">
-            Zertoo <span className="text-lime">Eats!</span>
-          </h1>
-          <p className="text-sm text-white/70 mt-1">Descubre dónde comer, ahora mismo</p>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.svg" alt="Zertoo Eats" className="h-10 w-auto" />
+          <p className="text-sm text-graphite/70 mt-1">Descubre dónde comer, ahora mismo</p>
         </div>
       </header>
 
