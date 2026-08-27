@@ -98,7 +98,7 @@ export default async function BusinessPage({ params }: { params: { slug: string 
                 href={`https://zertoo.app/menu/${tenant.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="shrink-0 text-xs font-semibold px-3.5 py-2 rounded-lg bg-graphite text-white hover:brightness-110"
+                className="shrink-0 text-xs font-semibold px-3.5 py-2 rounded-lg bg-[#e4f73e] text-graphite hover:brightness-95"
               >
                 Ver menú
               </a>
