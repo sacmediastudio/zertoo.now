@@ -89,8 +89,20 @@ export default async function BusinessPage({ params }: { params: { slug: string 
                 </span>
               )}
             </div>
-            {tenant.address && <p className="text-sm text-graphite/60 mt-3">{tenant.address}</p>}
-            {tenant.contactPhone && <p className="text-sm text-graphite/60 mt-1">{tenant.contactPhone}</p>}
+            <div className="flex items-start justify-between gap-3 w-full mt-4">
+              <div className="text-left min-w-0 flex-1">
+                {tenant.address && <p className="text-sm text-graphite/60">{tenant.address}</p>}
+                {tenant.contactPhone && <p className="text-sm text-graphite/60 mt-1">{tenant.contactPhone}</p>}
+              </div>
+              <a
+                href={`https://zertoo.app/menu/${tenant.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 text-xs font-semibold px-3.5 py-2 rounded-lg bg-graphite text-white hover:brightness-110"
+              >
+                Ver menú
+              </a>
+            </div>
           </div>
         </div>
 
