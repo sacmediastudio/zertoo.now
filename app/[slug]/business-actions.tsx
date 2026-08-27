@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://now.zertoo.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://zertooeats.com";
 
 export default function BusinessActions({
   slug,

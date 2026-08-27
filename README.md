@@ -1,15 +1,14 @@
 # Zertoo Eats!
 
 Directorio de restaurantes — un proyecto **separado** del Zertoo
-principal (`saas-platform`), pensado para vivir en su propio
-subdominio, con su propio servicio en Railway.
+principal (`saas-platform`), en su propio dominio (`zertooeats.com`),
+con su propio servicio en Railway.
 
 > **Antes se llamaba "Zertoo Now"** y cubría también Citas/servicios
 > (peluquerías, spas, etc.) — el usuario decidió reenfocarlo
 > exclusivamente en restaurantes y renombrarlo a "Zertoo Eats". El
-> dominio (`now.zertoo.app`) se mantiene igual por ahora a propósito —
-> cambiarlo es un paso de infraestructura aparte (DNS + Railway) que
-> no se hizo todavía.
+> dominio también migró, de `now.zertoo.app` a `zertooeats.com`
+> (dominio propio, registrado por el usuario).
 
 ## ⚠️ Comparte la base de datos con el proyecto principal
 
@@ -62,13 +61,10 @@ la misma que `saas-platform`, mediante la misma variable
 
 ## Lo que todavía falta (próximas etapas)
 
-- El botón "Share this moment" en el menú/perfil público, y la
-  bandeja de aprobación de fotos en el dashboard de cada negocio, y
-  que el admin de Zertoo pueda borrar una foto (`Moment`) si hiciera
-  falta (el modelo ya existe, falta toda esta funcionalidad)
-- Cambiar el dominio de `now.zertoo.app` a algo con "eats" (ej.
-  `eats.zertoo.app`) — pendiente de que el usuario decida, requiere
-  configurar DNS + Railway de nuevo
+Nada pendiente por ahora. Los 2 ítems que estaban acá antes ya se
+resolvieron: "Share this moment" se descartó (decisión del usuario,
+no se va a construir), y el cambio de dominio a `zertooeats.com` ya
+se hizo.
 
 ## Variables de entorno
 
@@ -83,6 +79,6 @@ npm run build   # corre `prisma generate` + `next build`, nunca db push
 ```
 
 En Railway: agregar `DATABASE_URL` (copiada del servicio principal) y
-`NEXT_PUBLIC_SITE_URL="https://now.zertoo.app"` como variables de
+`NEXT_PUBLIC_SITE_URL="https://zertooeats.com"` como variables de
 entorno del servicio `zertoo.now`, y el dominio personalizado
-`now.zertoo.app` en su configuración de Networking.
+`zertooeats.com` en su configuración de Networking.
