@@ -64,19 +64,30 @@ export default async function HomePage({
     return { ...t, avgRating, reviewCount: publishedReviews.length, distanceKm };
   });
 
+  // Fuera de este radio no tiene sentido considerarlo "cerca" — sin
+  // este límite, alguien en otro país seguía viendo la lista completa,
+  // solo que ordenada por una distancia gigante en vez de filtrada.
+  // 20 km es más que de sobra para Aruba (32 km de punta a punta) —
+  // nadie busca comer en un restaurante a 50 km en una isla así de
+  // chica.
+  const MAX_NEAR_ME_KM = 20;
+
   // Con "cerca de mí" activo, se muestra UN solo listado ordenado por
   // distancia real — separar Destacados del resto no tendría sentido
   // acá, porque son dos criterios de orden distintos que podrían
   // contradecirse (lo "destacado" no necesariamente es lo más cerca).
   // Los negocios sin coordenadas todavía (no geocodificados) quedan al
-  // final, no se pueden ordenar por algo que no tienen.
+  // final, no se pueden ordenar por algo que no tienen — pero si están
+  // confirmados fuera del radio, se descartan directamente.
   const byDistance = nearMeActive
-    ? [...withRatings].sort((a, b) => {
-        if (a.distanceKm === null && b.distanceKm === null) return 0;
-        if (a.distanceKm === null) return 1;
-        if (b.distanceKm === null) return -1;
-        return a.distanceKm - b.distanceKm;
-      })
+    ? [...withRatings]
+        .filter((t) => t.distanceKm === null || t.distanceKm <= MAX_NEAR_ME_KM)
+        .sort((a, b) => {
+          if (a.distanceKm === null && b.distanceKm === null) return 0;
+          if (a.distanceKm === null) return 1;
+          if (b.distanceKm === null) return -1;
+          return a.distanceKm - b.distanceKm;
+        })
     : [];
 
   const featured = withRatings.filter((t) => t.nowFeatured);

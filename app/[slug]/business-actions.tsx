@@ -10,12 +10,14 @@ export default function BusinessActions({
   address,
   latitude,
   longitude,
+  googleMapsUrl,
 }: {
   slug: string;
   name: string;
   address: string | null;
   latitude: number | null;
   longitude: number | null;
+  googleMapsUrl: string | null;
 }) {
   // navigator.share no existe en el servidor — se revisa recién
   // montado, para no arriesgar un desajuste entre lo que se renderiza
@@ -29,15 +31,19 @@ export default function BusinessActions({
   const shareUrl = `${SITE_URL}/${slug}`;
   const shareText = `Mirá ${name} en Zertoo Eats`;
 
-  // Con coordenadas reales (ya geocodificadas) o, si todavía no las
-  // tiene, con la dirección de texto tal cual — Google Maps acepta las
-  // dos formas igual de bien.
+  // Orden de prioridad: 1) el link de Google Maps que el propio
+  // negocio cargó a mano (el más preciso, es su pin real) — 2) si no
+  // tiene, las coordenadas geocodificadas de su dirección — 3) si
+  // tampoco tiene eso, la dirección de texto tal cual. Geocodificar
+  // texto acerca a la manzana correcta, pero no siempre a la puerta;
+  // el link propio del negocio no tiene ese problema.
   const directionsUrl =
-    latitude !== null && longitude !== null
+    googleMapsUrl ||
+    (latitude !== null && longitude !== null
       ? `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`
       : address
         ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`
-        : null;
+        : null);
 
   const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${shareText}: ${shareUrl}`)}`;
 

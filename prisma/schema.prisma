@@ -86,11 +86,12 @@ model Tenant {
   address      String?
   contactPhone String?
 
-  nowEnabled  Boolean      @default(false)
-  nowCategory NowCategory?
-  nowFeatured Boolean      @default(false)
-  latitude    Float?
-  longitude   Float?
+  nowEnabled    Boolean      @default(false)
+  nowCategory   NowCategory?
+  nowFeatured   Boolean      @default(false)
+  latitude      Float?
+  longitude     Float?
+  googleMapsUrl String?
 
   reviews Review[]
   moments Moment[]

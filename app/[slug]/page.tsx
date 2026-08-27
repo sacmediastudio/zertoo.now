@@ -112,6 +112,7 @@ export default async function BusinessPage({ params }: { params: { slug: string 
           address={tenant.address}
           latitude={tenant.latitude}
           longitude={tenant.longitude}
+          googleMapsUrl={tenant.googleMapsUrl}
         />
       </main>
 

@@ -57,7 +57,13 @@ export default function BusinessList({
 
       {hasAnyTenants && totalShown === 0 && (
         <p className="text-sm text-graphite/60 text-center py-10">
-          Nada coincide con &quot;{query}&quot; — probá con otra palabra.
+          {query.trim() ? (
+            <>Nada coincide con &quot;{query}&quot; — probá con otra palabra.</>
+          ) : nearMeActive ? (
+            "No encontramos restaurantes cerca tuyo — todavía no llegamos a tu zona."
+          ) : (
+            "Nada coincide con tu búsqueda."
+          )}
         </p>
       )}
 
