@@ -65,3 +65,4 @@ En Railway: agregar `DATABASE_URL` (copiada del servicio principal) y
 `NEXT_PUBLIC_SITE_URL="https://now.zertoo.app"` como variables de
 entorno del servicio `zertoo.now`, y el dominio personalizado
 `now.zertoo.app` en su configuración de Networking.
+
