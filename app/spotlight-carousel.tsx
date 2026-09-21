@@ -21,27 +21,46 @@ export default function SpotlightCarousel({
   const { lang } = useLang();
   const trackRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
-  const userInteractedRef = useRef(false);
+  const scrollSettleTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // El auto-avance manda el scroll directo sobre el DOM (lee la
+  // posición actual ahí mismo, no de `index` en React) — antes ese
+  // efecto dependía de `index` y el handler de scroll TAMBIÉN escribía
+  // `index`, así que cada auto-avance se retroalimentaba con su propia
+  // corrección de scroll y el carrusel terminaba peleando consigo mismo
+  // a mitad de camino. Ahora `index` es de una sola vía: nace del
+  // scroll ya asentado (real o por swipe), nunca al revés — solo se usa
+  // para pintar los puntos.
   useEffect(() => {
     if (businesses.length < 2) return;
     const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % businesses.length);
+      const track = trackRef.current;
+      if (!track || track.clientWidth === 0) return;
+      const current = Math.round(track.scrollLeft / track.clientWidth);
+      const next = (current + 1) % businesses.length;
+      track.scrollTo({ left: next * track.clientWidth, behavior: "smooth" });
     }, AUTO_ADVANCE_MS);
     return () => clearInterval(interval);
   }, [businesses.length]);
 
   useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    track.scrollTo({ left: index * track.clientWidth, behavior: "smooth" });
-  }, [index]);
+    return () => {
+      if (scrollSettleTimeout.current) clearTimeout(scrollSettleTimeout.current);
+    };
+  }, []);
 
+  // Tanto el auto-avance como un swipe manual disparan varios eventos
+  // "scroll" mientras están en tránsito — se espera a que el scroll
+  // esté quieto un rato (igual que onMomentumScrollEnd en la app) antes
+  // de recalcular qué punto pintar activo.
   function handleScroll() {
-    const track = trackRef.current;
-    if (!track || track.clientWidth === 0) return;
-    const newIndex = Math.round(track.scrollLeft / track.clientWidth);
-    setIndex(Math.max(0, Math.min(newIndex, businesses.length - 1)));
+    if (scrollSettleTimeout.current) clearTimeout(scrollSettleTimeout.current);
+    scrollSettleTimeout.current = setTimeout(() => {
+      const track = trackRef.current;
+      if (!track || track.clientWidth === 0) return;
+      const newIndex = Math.round(track.scrollLeft / track.clientWidth);
+      setIndex(Math.max(0, Math.min(newIndex, businesses.length - 1)));
+    }, 120);
   }
 
   if (businesses.length === 0) return null;
