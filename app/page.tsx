@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
-import type { NowCategory } from "@prisma/client";
-import { CATEGORY_LABELS } from "@/lib/categories";
+import type { NowCategory, NowPriceRange } from "@prisma/client";
+import { CATEGORY_LABELS, PRICE_RANGE_LABELS, PRICE_RANGE_ORDER } from "@/lib/categories";
 import HomeContent from "./home-content";
 
 // Fuerza que esto se genere en cada visita (tiempo de ejecución), NO
@@ -33,7 +33,7 @@ function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number): nu
 export default async function HomePage({
   searchParams,
 }: {
-  searchParams: { category?: string; lat?: string; lng?: string };
+  searchParams: { category?: string; priceRange?: string; lat?: string; lng?: string };
 }) {
   const allTenants = await db.tenant.findMany({
     where: { nowEnabled: true },
@@ -41,23 +41,43 @@ export default async function HomePage({
     orderBy: { nowFeatured: "desc" },
   });
 
-  // Solo se muestran como opción las categorías que de verdad tienen
-  // algún negocio activo — no tiene sentido dejar elegir "Sushi" si
-  // hoy no hay ningún negocio de sushi.
+  // El carrusel de portada es siempre el mismo set curado a mano
+  // (nowSpotlight), sin importar los filtros activos — no es un
+  // resultado de búsqueda, es una vidriera fija. Mismo criterio que
+  // /api/public/eats/listings en saas-platform.
+  const spotlightTenants = await db.tenant.findMany({
+    where: { nowEnabled: true, nowSpotlight: true },
+    include: { reviews: { where: { status: "PUBLISHED" } } },
+    orderBy: { name: "asc" },
+  });
+
+  // Solo se muestran como opción las categorías/precios que de verdad
+  // tienen algún negocio activo — no tiene sentido dejar elegir "Sushi"
+  // si hoy no hay ningún negocio de sushi.
   const availableCategories = Array.from(
     new Set(allTenants.map((t) => t.nowCategory).filter((c): c is NowCategory => Boolean(c)))
   ).sort((a, b) => (CATEGORY_LABELS.es[a] ?? a).localeCompare(CATEGORY_LABELS.es[b] ?? b));
 
+  const activePriceRanges = new Set(
+    allTenants.map((t) => t.nowPriceRange).filter((p): p is NowPriceRange => Boolean(p))
+  );
+  const availablePriceRanges = PRICE_RANGE_ORDER.filter((p) => activePriceRanges.has(p));
+
   const selectedCategory = searchParams.category;
-  const filteredTenants = selectedCategory
-    ? allTenants.filter((t) => t.nowCategory === selectedCategory)
-    : allTenants;
+  const selectedPriceRange = searchParams.priceRange;
+  const filteredTenants = allTenants.filter(
+    (t) =>
+      (!selectedCategory || t.nowCategory === selectedCategory) &&
+      (!selectedPriceRange || t.nowPriceRange === selectedPriceRange)
+  );
 
   const userLat = searchParams.lat ? Number(searchParams.lat) : null;
   const userLng = searchParams.lng ? Number(searchParams.lng) : null;
   const nearMeActive = userLat !== null && userLng !== null && !Number.isNaN(userLat) && !Number.isNaN(userLng);
 
-  const withRatings = filteredTenants.map((t) => {
+  function withRating<T extends { reviews: { rating: number }[]; latitude: number | null; longitude: number | null }>(
+    t: T
+  ) {
     const publishedReviews = t.reviews;
     const avgRating =
       publishedReviews.length > 0
@@ -68,7 +88,10 @@ export default async function HomePage({
         ? haversineKm(userLat!, userLng!, t.latitude, t.longitude)
         : null;
     return { ...t, avgRating, reviewCount: publishedReviews.length, distanceKm };
-  });
+  }
+
+  const withRatings = filteredTenants.map(withRating);
+  const spotlight = spotlightTenants.map(withRating);
 
   // Fuera de este radio no tiene sentido considerarlo "cerca" — sin
   // este límite, alguien en otro país seguía viendo la lista completa,
@@ -103,6 +126,9 @@ export default async function HomePage({
     <HomeContent
       availableCategories={availableCategories}
       selectedCategory={selectedCategory}
+      availablePriceRanges={availablePriceRanges.map((value) => ({ value, label: PRICE_RANGE_LABELS[value] ?? value }))}
+      selectedPriceRange={selectedPriceRange}
+      spotlight={spotlight}
       allTenantsCount={allTenants.length}
       filteredTenantsCount={filteredTenants.length}
       nearMeActive={nearMeActive}

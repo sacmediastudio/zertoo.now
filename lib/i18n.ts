@@ -22,6 +22,9 @@ export const translations = {
     taglinePart1: "Descubre dónde comer,",
     taglinePart2: "¡ahora mismo!",
     all: "Todas",
+    categoryTitle: "Categoría",
+    priceRangeAll: "Precio",
+    priceRangeTitle: "Rango de precio",
     footer: "Un producto de Zertoo",
     nearMe: {
       searching: "Buscando tu ubicación...",
@@ -60,6 +63,9 @@ export const translations = {
     taglinePart1: "Discover where to eat,",
     taglinePart2: "right now!",
     all: "All",
+    categoryTitle: "Category",
+    priceRangeAll: "Price",
+    priceRangeTitle: "Price range",
     footer: "A Zertoo product",
     nearMe: {
       searching: "Finding your location...",

@@ -64,6 +64,14 @@ enum ReviewStatus {
   REPORTED
 }
 
+// Mismos 4 valores exactos que el enum real en saas-platform.
+enum NowPriceRange {
+  BUDGET
+  MODERATE
+  EXPENSIVE
+  LUXURY
+}
+
 // Mismos 3 valores exactos que el enum real en saas-platform — tiene
 // que coincidir, porque apunta a la misma columna real.
 enum BusinessType {
@@ -86,9 +94,13 @@ model Tenant {
   address      String?
   contactPhone String?
 
-  nowEnabled    Boolean      @default(false)
+  nowEnabled    Boolean        @default(false)
   nowCategory   NowCategory?
-  nowFeatured   Boolean      @default(false)
+  nowPriceRange NowPriceRange?
+  nowFeatured   Boolean        @default(false)
+  // Carrusel de portada (suscripción premium, lo cura el admin desde
+  // /admin/now) — mismo campo real que saas-platform.
+  nowSpotlight  Boolean        @default(false)
   latitude      Float?
   longitude     Float?
   googleMapsUrl String?

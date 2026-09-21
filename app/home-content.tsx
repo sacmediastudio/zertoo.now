@@ -1,15 +1,22 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { CATEGORY_LABELS } from "@/lib/categories";
 import { useLang } from "@/lib/lang-context";
 import LangSwitch from "@/components/lang-switch";
 import NearMeButton from "./near-me-button";
+import FilterSelect from "./filter-select";
+import SpotlightCarousel from "./spotlight-carousel";
 import BusinessList, { type SearchableTenant } from "./business-list";
+import type { BusinessCardData } from "./business-card";
 
 export default function HomeContent({
   availableCategories,
   selectedCategory,
+  availablePriceRanges,
+  selectedPriceRange,
+  spotlight,
   allTenantsCount,
   filteredTenantsCount,
   nearMeActive,
@@ -19,6 +26,9 @@ export default function HomeContent({
 }: {
   availableCategories: string[];
   selectedCategory: string | undefined;
+  availablePriceRanges: { value: string; label: string }[];
+  selectedPriceRange: string | undefined;
+  spotlight: BusinessCardData[];
   allTenantsCount: number;
   filteredTenantsCount: number;
   nearMeActive: boolean;
@@ -27,7 +37,16 @@ export default function HomeContent({
   rest: SearchableTenant[];
 }) {
   const { lang, t } = useLang();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [query, setQuery] = useState("");
+
+  function updateParam(key: "category" | "priceRange", value: string | null) {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value) params.set(key, value);
+    else params.delete(key);
+    router.push(params.toString() ? `/?${params.toString()}` : "/");
+  }
 
   return (
     <div className="min-h-screen bg-[#F5F5F5]">
@@ -52,31 +71,30 @@ export default function HomeContent({
       </div>
 
       <div className="max-w-xl mx-auto px-5 pt-5 flex flex-wrap items-center gap-2">
-        <a
-          href="/"
-          className={`text-xs font-semibold px-3 py-1.5 rounded-full transition-colors ${
-            !selectedCategory ? "bg-graphite text-white" : "bg-white text-graphite/70 hover:bg-graphite/5"
-          }`}
-        >
-          {t.all}
-        </a>
-        {availableCategories.map((cat) => (
-          <a
-            key={cat}
-            href={`/?category=${cat}`}
-            className={`text-xs font-semibold px-3 py-1.5 rounded-full transition-colors ${
-              selectedCategory === cat ? "bg-graphite text-white" : "bg-white text-graphite/70 hover:bg-graphite/5"
-            }`}
-          >
-            {CATEGORY_LABELS[lang][cat] ?? cat}
-          </a>
-        ))}
+        <FilterSelect
+          options={availableCategories.map((cat) => ({ value: cat, label: CATEGORY_LABELS[lang][cat] ?? cat }))}
+          value={selectedCategory ?? null}
+          onChange={(v) => updateParam("category", v)}
+          allLabel={t.all}
+          title={t.categoryTitle}
+        />
+        <FilterSelect
+          options={availablePriceRanges}
+          value={selectedPriceRange ?? null}
+          onChange={(v) => updateParam("priceRange", v)}
+          allLabel={t.priceRangeAll}
+          title={t.priceRangeTitle}
+        />
         <NearMeButton active={nearMeActive} />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logo.svg" alt="Zertoo Eats" className="h-9 w-auto ml-auto" />
       </div>
 
       <main className="max-w-xl mx-auto px-5 py-6 flex flex-col gap-5">
+        {spotlight.length > 0 && (
+          <SpotlightCarousel businesses={spotlight} onNavigate={(slug) => router.push(`/${slug}`)} />
+        )}
+
         {filteredTenantsCount === 0 && allTenantsCount > 0 && (
           <p className="text-sm text-graphite/60 text-center py-16">
             {t.empty.noneInCategory}{" "}

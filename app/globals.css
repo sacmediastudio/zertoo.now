@@ -59,3 +59,12 @@ body {
   display: inline-block;
   animation: tagline-cycle-down 4.9s ease-in-out infinite;
 }
+
+/* Oculta la barra de scroll del carrusel de Spotlight (el swipe entre
+   fotos sigue funcionando igual, solo se esconde la barra visual). */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}

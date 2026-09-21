@@ -59,6 +59,17 @@ export const CATEGORY_LABELS: Record<Lang, Record<string, string>> = {
   },
 };
 
+export const PRICE_RANGE_LABELS: Record<string, string> = {
+  BUDGET: "$",
+  MODERATE: "$$",
+  EXPENSIVE: "$$$",
+  LUXURY: "$$$$",
+};
+
+// Mismo orden real (no alfabético) que usa el filtro de la app —
+// de más barato a más caro.
+export const PRICE_RANGE_ORDER = ["BUDGET", "MODERATE", "EXPENSIVE", "LUXURY"] as const;
+
 // Zertoo Eats es solo para restaurantes — este segundo nivel de
 // búsqueda (para "restaurantes"/"restaurants" encuentre cualquiera sin
 // importar su categoría específica) queda con un solo valor por
