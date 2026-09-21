@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import BusinessCard, { type BusinessCardData } from "./business-card";
+import FeaturedCard from "./featured-card";
 import { CATEGORY_LABELS, BUSINESS_TYPE_LABELS } from "@/lib/categories";
 import { useLang } from "@/lib/lang-context";
 
@@ -10,12 +10,14 @@ export interface SearchableTenant extends BusinessCardData {
 }
 
 export default function BusinessList({
+  query,
   nearMeActive,
   byDistance,
   featured,
   rest,
   hasAnyTenants,
 }: {
+  query: string;
   nearMeActive: boolean;
   byDistance: SearchableTenant[];
   featured: SearchableTenant[];
@@ -23,7 +25,6 @@ export default function BusinessList({
   hasAnyTenants: boolean;
 }) {
   const { lang, t } = useLang();
-  const [query, setQuery] = useState("");
 
   // Busca por nombre, por categoría específica ("Criolla"), o por tipo
   // de negocio en general ("Restaurantes", "Restaurants") — no busca
@@ -50,14 +51,6 @@ export default function BusinessList({
 
   return (
     <>
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder={t.search.placeholder}
-        className="w-full bg-white border border-graphite/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-graphite/30"
-      />
-
       {hasAnyTenants && totalShown === 0 && (
         <p className="text-sm text-graphite/60 text-center py-10">
           {query.trim() ? t.search.noMatchQuery(query) : nearMeActive ? t.search.noNearby : t.search.noMatch}
@@ -82,9 +75,9 @@ export default function BusinessList({
           <h2 className="text-xs font-bold tracking-[0.15em] uppercase text-graphite/50 mb-3">
             {t.search.featuredSection}
           </h2>
-          <div className="flex flex-col gap-3">
+          <div className="grid grid-cols-2 gap-3">
             {filteredFeatured.map((tenant) => (
-              <BusinessCard key={tenant.id} tenant={tenant} />
+              <FeaturedCard key={tenant.id} tenant={tenant} />
             ))}
           </div>
         </section>

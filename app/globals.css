@@ -5,3 +5,57 @@
 body {
   background-color: #f5f5f5;
 }
+
+/* Ciclo del tagline animado del header (ver app/home-content.tsx):
+   visible 4s, sale (450ms), salto instantáneo al lado opuesto (invisible),
+   entra de nuevo (450ms) — ciclo de 4.9s. "up" sale por arriba y entra por
+   abajo; "down" es el espejo (mismo patrón que la versión de la app móvil). */
+@keyframes tagline-cycle-up {
+  0%,
+  81.6% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  90.8% {
+    transform: translateY(-14px);
+    opacity: 0;
+  }
+  90.9% {
+    transform: translateY(14px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes tagline-cycle-down {
+  0%,
+  81.6% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  90.8% {
+    transform: translateY(14px);
+    opacity: 0;
+  }
+  90.9% {
+    transform: translateY(-14px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-tagline-up {
+  display: inline-block;
+  animation: tagline-cycle-up 4.9s ease-in-out infinite;
+}
+
+.animate-tagline-down {
+  display: inline-block;
+  animation: tagline-cycle-down 4.9s ease-in-out infinite;
+}

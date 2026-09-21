@@ -19,7 +19,8 @@ export function setStoredLang(lang: Lang) {
 
 export const translations = {
   es: {
-    tagline: "Descubre dónde comer, ahora mismo",
+    taglinePart1: "Descubre dónde comer,",
+    taglinePart2: "¡ahora mismo!",
     all: "Todas",
     footer: "Un producto de Zertoo",
     nearMe: {
@@ -56,7 +57,8 @@ export const translations = {
     },
   },
   en: {
-    tagline: "Discover where to eat, right now",
+    taglinePart1: "Discover where to eat,",
+    taglinePart2: "right now!",
     all: "All",
     footer: "A Zertoo product",
     nearMe: {
