@@ -1,34 +1,81 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { Menu, X } from "lucide-react";
 
 const WEBAPP_URL = "https://app.zertooeats.com";
 const BUSINESS_URL = "https://zertoo.app";
 
-export default function LandingHeader() {
-  return (
-    <header className="sticky top-0 z-50 bg-lime/95 backdrop-blur border-b border-graphite/10">
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
-        <Image src="/logo.svg" alt="ZertooEats" width={140} height={52} className="h-9 w-auto" priority />
+// Los nav links del diseño original (Restaurants/How it works/For
+// Business/About) eran anclas de una sola página — acá van a los
+// destinos reales que pidió el negocio: la app web, el panel de
+// negocios y contacto.
+const NAV_LINKS = [
+  { label: "App Web", href: WEBAPP_URL },
+  { label: "Zertoo Businesses", href: BUSINESS_URL },
+  { label: "Contact", href: "#contact" },
+];
 
-        <nav className="hidden md:flex items-center gap-7 text-sm font-semibold text-graphite">
-          <a href={WEBAPP_URL} className="hover:opacity-70 transition">
-            App Web
+export default function LandingHeader() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <header className="bg-lime">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
+        <a href="#" aria-label="ZertooEats — back to top">
+          <Image src="/logo.svg" alt="ZertooEats" width={160} height={60} className="h-9 w-36 object-contain md:h-11 md:w-44" priority />
+        </a>
+
+        <nav className="hidden items-center gap-8 lg:flex" aria-label="Main">
+          {NAV_LINKS.map((link) => (
+            <a key={link.label} href={link.href} className="text-sm font-semibold text-charcoal transition-colors hover:text-graphite">
+              {link.label}
+            </a>
+          ))}
+          <a
+            href="#download"
+            className="rounded-full bg-graphite px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-charcoal active:scale-[0.98]"
+          >
+            Get the App
           </a>
-          <a href={BUSINESS_URL} className="hover:opacity-70 transition">
-            Zertoo Businesses
-          </a>
-          <Link href="#contact" className="hover:opacity-70 transition">
-            Contact
-          </Link>
         </nav>
 
-        <Link
-          href="#download"
-          className="bg-graphite text-white text-sm font-semibold rounded-full px-5 py-2.5 hover:brightness-125 transition whitespace-nowrap"
+        <button
+          type="button"
+          onClick={() => setOpen((value) => !value)}
+          aria-expanded={open}
+          aria-label={open ? "Close menu" : "Open menu"}
+          className="grid h-11 w-11 place-items-center rounded-full text-graphite lg:hidden"
         >
-          Get the App
-        </Link>
+          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
       </div>
+
+      {open ? (
+        <nav className="border-t border-graphite/10 px-6 pb-6 pt-2 lg:hidden" aria-label="Mobile">
+          <ul className="flex flex-col gap-1">
+            {NAV_LINKS.map((link) => (
+              <li key={link.label}>
+                <a
+                  href={link.href}
+                  onClick={() => setOpen(false)}
+                  className="block rounded-lg px-2 py-3 text-base font-semibold text-charcoal transition-colors hover:bg-graphite/5"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a
+            href="#download"
+            onClick={() => setOpen(false)}
+            className="mt-3 block rounded-full bg-graphite px-6 py-3.5 text-center text-sm font-bold text-white"
+          >
+            Get the App
+          </a>
+        </nav>
+      ) : null}
     </header>
   );
 }

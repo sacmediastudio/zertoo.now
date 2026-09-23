@@ -5,7 +5,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        sans: ["var(--font-jakarta)", "system-ui", "sans-serif"],
+        hand: ["var(--font-caveat)", "cursive"],
       },
       colors: {
         // Mismos colores de marca que el resto de Zertoo.
@@ -14,7 +15,8 @@ const config: Config = {
         // Sumados para la landing — mismo rojo/coral que ya usa el
         // logo (logo.svg) y el resto de la marca como color de acento.
         coral: "#dd5152",
-        charcoal: "#383738",
+        charcoal: "#2D2B2C",
+        cream: "#FCFCF7",
       },
     },
   },

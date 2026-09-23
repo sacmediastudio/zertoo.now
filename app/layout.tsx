@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Plus_Jakarta_Sans, Caveat } from "next/font/google";
 import "./globals.css";
 import LangProvider from "@/components/lang-provider";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta" });
+// Fuente manuscrita para los HandNote (notitas tipo "Good Food Closer to
+// You") que acompañan las fotos en la landing.
+const caveat = Caveat({ subsets: ["latin"], variable: "--font-caveat" });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://zertooeats.com";
 
@@ -15,7 +18,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={inter.variable}>
+    <html lang="es" className={`${jakarta.variable} ${caveat.variable}`}>
       <body>
         <LangProvider>{children}</LangProvider>
       </body>
