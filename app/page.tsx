@@ -1,140 +1,141 @@
-import { db } from "@/lib/db";
-import type { NowCategory, NowPriceRange } from "@prisma/client";
-import { CATEGORY_LABELS, PRICE_RANGE_LABELS, PRICE_RANGE_ORDER } from "@/lib/categories";
-import HomeContent from "./home-content";
+import Image from "next/image";
+import Link from "next/link";
+import LandingHeader from "./landing/header";
+import LandingFooter from "./landing/footer";
+import StoreBadges from "./landing/store-badges";
 
-// Fuerza que esto se genere en cada visita (tiempo de ejecución), NO
-// durante `next build` — la base de datos solo es alcanzable en
-// tiempo de ejecución (red privada de Railway), mismo motivo por el
-// que el sitemap del proyecto principal necesitó este mismo fix.
-export const dynamic = "force-dynamic";
+const WEBAPP_URL = "https://app.zertooeats.com";
 
-// Distancia entre dos puntos en la Tierra, en km — cálculo puro, sin
-// necesidad de ningún servicio externo (la geocodificación de la
-// dirección del negocio sí lo necesita, pero eso ya pasó una sola vez
-// de antemano; esto es solo matemática).
-function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const R = 6371;
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLon = ((lon2 - lon1) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
+const CATEGORIES = [
+  { emoji: "🍔", label: "Burgers" },
+  { emoji: "🍕", label: "Pizza" },
+  { emoji: "🍣", label: "Sushi" },
+  { emoji: "🍹", label: "Bars" },
+  { emoji: "☕", label: "Cafés" },
+  { emoji: "🍽️", label: "And more" },
+];
 
-// El ORDEN de las categorías disponibles se calcula acá (servidor,
-// usando las etiquetas en español como criterio de orden alfabético)
-// — no cambia según el idioma elegido, solo la ETIQUETA que se
-// muestra cambia (eso sí depende del idioma, y se resuelve en
-// HomeContent). Es una decisión menor: el orden de las categorías es
-// el mismo sin importar el idioma, en vez de reordenarse alfabético
-// en cada idioma por separado.
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams: { category?: string; priceRange?: string; lat?: string; lng?: string };
-}) {
-  const allTenants = await db.tenant.findMany({
-    where: { nowEnabled: true },
-    include: { reviews: { where: { status: "PUBLISHED" } } },
-    orderBy: { nowFeatured: "desc" },
-  });
+const FEATURES = [
+  { title: "Find nearby", body: "See what's good to eat, right around you." },
+  { title: "View menus", body: "Full digital menus with real photos and prices." },
+  { title: "Exclusive deals", body: "Promos and specials the moment they drop." },
+  { title: "Collect stamps", body: "Loyalty rewards across every business you visit." },
+];
 
-  // El carrusel de portada es siempre el mismo set curado a mano
-  // (nowSpotlight), sin importar los filtros activos — no es un
-  // resultado de búsqueda, es una vidriera fija. Mismo criterio que
-  // /api/public/eats/listings en saas-platform.
-  const spotlightTenants = await db.tenant.findMany({
-    where: { nowEnabled: true, nowSpotlight: true },
-    include: { reviews: { where: { status: "PUBLISHED" } } },
-    orderBy: { name: "asc" },
-  });
-
-  // Solo se muestran como opción las categorías/precios que de verdad
-  // tienen algún negocio activo — no tiene sentido dejar elegir "Sushi"
-  // si hoy no hay ningún negocio de sushi.
-  const availableCategories = Array.from(
-    new Set(allTenants.map((t) => t.nowCategory).filter((c): c is NowCategory => Boolean(c)))
-  ).sort((a, b) => (CATEGORY_LABELS.es[a] ?? a).localeCompare(CATEGORY_LABELS.es[b] ?? b));
-
-  const activePriceRanges = new Set(
-    allTenants.map((t) => t.nowPriceRange).filter((p): p is NowPriceRange => Boolean(p))
-  );
-  const availablePriceRanges = PRICE_RANGE_ORDER.filter((p) => activePriceRanges.has(p));
-
-  const selectedCategory = searchParams.category;
-  const selectedPriceRange = searchParams.priceRange;
-  const filteredTenants = allTenants.filter(
-    (t) =>
-      (!selectedCategory || t.nowCategory === selectedCategory) &&
-      (!selectedPriceRange || t.nowPriceRange === selectedPriceRange)
-  );
-
-  const userLat = searchParams.lat ? Number(searchParams.lat) : null;
-  const userLng = searchParams.lng ? Number(searchParams.lng) : null;
-  const nearMeActive = userLat !== null && userLng !== null && !Number.isNaN(userLat) && !Number.isNaN(userLng);
-
-  function withRating<T extends { reviews: { rating: number }[]; latitude: number | null; longitude: number | null }>(
-    t: T
-  ) {
-    const publishedReviews = t.reviews;
-    const avgRating =
-      publishedReviews.length > 0
-        ? publishedReviews.reduce((sum, r) => sum + r.rating, 0) / publishedReviews.length
-        : null;
-    const distanceKm =
-      nearMeActive && t.latitude !== null && t.longitude !== null
-        ? haversineKm(userLat!, userLng!, t.latitude, t.longitude)
-        : null;
-    return { ...t, avgRating, reviewCount: publishedReviews.length, distanceKm };
-  }
-
-  const withRatings = filteredTenants.map(withRating);
-  const spotlight = spotlightTenants.map(withRating);
-
-  // Fuera de este radio no tiene sentido considerarlo "cerca" — sin
-  // este límite, alguien en otro país seguía viendo la lista completa,
-  // solo que ordenada por una distancia gigante en vez de filtrada.
-  // 20 km es más que de sobra para Aruba (32 km de punta a punta) —
-  // nadie busca comer en un restaurante a 50 km en una isla así de
-  // chica.
-  const MAX_NEAR_ME_KM = 20;
-
-  // Con "cerca de mí" activo, se muestra UN solo listado ordenado por
-  // distancia real — separar Destacados del resto no tendría sentido
-  // acá, porque son dos criterios de orden distintos que podrían
-  // contradecirse (lo "destacado" no necesariamente es lo más cerca).
-  // Los negocios sin coordenadas todavía (no geocodificados) quedan al
-  // final, no se pueden ordenar por algo que no tienen — pero si están
-  // confirmados fuera del radio, se descartan directamente.
-  const byDistance = nearMeActive
-    ? [...withRatings]
-        .filter((t) => t.distanceKm === null || t.distanceKm <= MAX_NEAR_ME_KM)
-        .sort((a, b) => {
-          if (a.distanceKm === null && b.distanceKm === null) return 0;
-          if (a.distanceKm === null) return 1;
-          if (b.distanceKm === null) return -1;
-          return a.distanceKm - b.distanceKm;
-        })
-    : [];
-
-  const featured = withRatings.filter((t) => t.nowFeatured);
-  const rest = withRatings.filter((t) => !t.nowFeatured);
-
+export default function LandingPage() {
   return (
-    <HomeContent
-      availableCategories={availableCategories}
-      selectedCategory={selectedCategory}
-      availablePriceRanges={availablePriceRanges.map((value) => ({ value, label: PRICE_RANGE_LABELS[value] ?? value }))}
-      selectedPriceRange={selectedPriceRange}
-      spotlight={spotlight}
-      allTenantsCount={allTenants.length}
-      filteredTenantsCount={filteredTenants.length}
-      nearMeActive={nearMeActive}
-      byDistance={byDistance}
-      featured={featured}
-      rest={rest}
-    />
+    <>
+      <LandingHeader />
+
+      <main>
+        {/* Hero */}
+        <section className="bg-lime overflow-hidden">
+          <div className="max-w-6xl mx-auto px-6 pt-14 pb-20 grid md:grid-cols-2 gap-10 items-center">
+            <div>
+              <p className="text-xs font-bold tracking-[0.25em] uppercase text-graphite/60 mb-3">
+                Good food. Great places.
+              </p>
+              <h1 className="text-5xl sm:text-6xl font-black text-graphite leading-[1.05]">
+                Find your next favorite <span className="text-coral">spot.</span>
+              </h1>
+              <p className="mt-5 text-lg text-graphite/80 max-w-md">
+                Menus, places, deals and more. All in one app — discover the best restaurants Aruba has to offer.
+              </p>
+              <StoreBadges className="mt-8" />
+            </div>
+
+            <div className="relative aspect-[4/5] rounded-3xl overflow-hidden">
+              <Image
+                src="/landing/hero-phone.jpg"
+                alt="ZertooEats app"
+                fill
+                sizes="(min-width: 768px) 480px, 90vw"
+                className="object-cover"
+                priority
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Categories */}
+        <section className="bg-[#FAFAF7]">
+          <div className="max-w-6xl mx-auto px-6 py-16">
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <div>
+                <h2 className="text-3xl sm:text-4xl font-black text-graphite leading-tight">
+                  Everything you crave, <span className="text-coral">right here.</span>
+                </h2>
+                <p className="mt-3 text-graphite/70 max-w-sm">
+                  Explore restaurants by category, browse menus, find deals and get directions — all in one place.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-5 md:justify-end">
+                {CATEGORIES.map((c) => (
+                  <div key={c.label} className="flex flex-col items-center gap-2 w-16">
+                    <div className="w-14 h-14 rounded-full bg-lime flex items-center justify-center text-2xl">
+                      {c.emoji}
+                    </div>
+                    <span className="text-xs font-semibold text-graphite text-center">{c.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Features */}
+        <section className="bg-white">
+          <div className="max-w-6xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-4">
+            {FEATURES.map((f) => (
+              <div key={f.title} className="border border-graphite/10 rounded-2xl p-6">
+                <h3 className="font-bold text-graphite text-lg">{f.title}</h3>
+                <p className="mt-1 text-sm text-graphite/70">{f.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Discover more / Eat better */}
+        <section className="bg-graphite">
+          <div className="max-w-6xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-10 items-center">
+            <div className="relative aspect-square w-full rounded-full overflow-hidden order-2 md:order-1 max-w-sm mx-auto">
+              <Image src="/landing/pizza.webp" alt="Pizza" fill sizes="400px" className="object-cover" />
+            </div>
+            <div className="order-1 md:order-2">
+              <h2 className="text-4xl sm:text-5xl font-black text-white leading-tight">
+                Discover more. <span className="text-lime">Eat better.</span>
+              </h2>
+              <p className="mt-4 text-white/70 max-w-sm">
+                From local favorites to hidden gems, ZertooEats brings the best of Aruba right to your fingertips.
+              </p>
+              <a
+                href={WEBAPP_URL}
+                className="mt-7 inline-block bg-white text-graphite font-semibold rounded-full px-6 py-3 hover:brightness-90 transition"
+              >
+                Explore Restaurants
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* Lifestyle / download */}
+        <section id="download" className="bg-lime">
+          <div className="max-w-6xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-10 items-center">
+            <div>
+              <h2 className="text-4xl sm:text-5xl font-black text-graphite leading-tight">
+                Your next bite is <span className="text-coral">closer than you think.</span>
+              </h2>
+              <p className="mt-4 text-graphite/80 max-w-sm">Good food. Great places. One easy search.</p>
+              <StoreBadges className="mt-7" />
+            </div>
+            <div className="relative aspect-[5/7] w-full max-w-sm mx-auto rounded-3xl overflow-hidden">
+              <Image src="/landing/lifestyle.webp" alt="Using ZertooEats" fill sizes="400px" className="object-cover" />
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <LandingFooter />
+    </>
   );
 }
