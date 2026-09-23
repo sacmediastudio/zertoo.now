@@ -8,9 +8,12 @@ import { NextRequest, NextResponse } from "next/server";
 // cuando la app vivía en la raíz) siguen funcionando: se redirigen al
 // subdominio nuevo en vez de dar 404.
 export function middleware(request: NextRequest) {
-  const host = request.headers.get("host") || "";
+  // Railway pasa el Host interno con puerto (ej. "zertooeats.com:8080")
+  // — hay que descartar el puerto antes de armar cualquier URL nueva,
+  // si no el redirect termina apuntando a "app.zertooeats.com:8080".
+  const hostname = (request.headers.get("host") || "").split(":")[0];
   const { pathname } = request.nextUrl;
-  const isAppSubdomain = host.startsWith("app.");
+  const isAppSubdomain = hostname.startsWith("app.");
 
   if (isAppSubdomain) {
     const url = request.nextUrl.clone();
@@ -20,7 +23,9 @@ export function middleware(request: NextRequest) {
 
   if (pathname !== "/") {
     const url = request.nextUrl.clone();
-    url.host = `app.${host}`;
+    url.protocol = "https";
+    url.port = "";
+    url.host = `app.${hostname}`;
     return NextResponse.redirect(url, 308);
   }
 
