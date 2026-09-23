@@ -4,15 +4,18 @@ import { motion } from "framer-motion";
 import { Heart, List, MapPin, Percent, type LucideIcon } from "lucide-react";
 import { HandNote } from "./hand-note";
 import { Reveal } from "./reveal";
-
-const APP_FEATURES: { label: string; icon: LucideIcon }[] = [
-  { label: "Find nearby", icon: MapPin },
-  { label: "View menus", icon: List },
-  { label: "Exclusive deals", icon: Percent },
-  { label: "Save your favorites", icon: Heart },
-];
+import { useLang } from "@/lib/lang-context";
 
 export default function AppShowcase() {
+  const { t } = useLang();
+
+  const APP_FEATURES: { label: string; icon: LucideIcon }[] = [
+    { label: t.landing.appShowcase.findNearby, icon: MapPin },
+    { label: t.landing.appShowcase.viewMenus, icon: List },
+    { label: t.landing.appShowcase.exclusiveDeals, icon: Percent },
+    { label: t.landing.appShowcase.saveFavorites, icon: Heart },
+  ];
+
   return (
     <section id="how-it-works" className="relative overflow-hidden bg-cream">
       {/* Forma lima de marca — entra desde abajo-izquierda detrás del teléfono */}
@@ -46,15 +49,12 @@ export default function AppShowcase() {
         <div className="relative z-20 flex flex-col justify-center pb-40 pt-2 sm:pb-48 lg:pb-36 lg:pl-4 lg:pr-8 xl:pl-8">
           <Reveal>
             <h2 className="max-w-xl text-[2.35rem] font-extrabold leading-[1.05] tracking-tight text-graphite sm:text-5xl lg:text-[3.25rem] xl:text-[3.5rem]">
-              Menus, Places
+              {t.landing.appShowcase.titleLine1}
               <br className="hidden sm:block" />
               <span className="sm:hidden"> </span>
-              <span className="text-coral">&amp; Deals.</span>
+              <span className="text-coral">{t.landing.appShowcase.titleHighlight}</span>
             </h2>
-            <p className="mt-5 max-w-md text-base font-medium leading-relaxed text-charcoal/80 sm:text-lg">
-              Discover amazing restaurants
-              <br className="hidden sm:block" /> in Aruba. Fast, easy and delicious.
-            </p>
+            <p className="mt-5 max-w-md text-base font-medium leading-relaxed text-charcoal/80 sm:text-lg">{t.landing.appShowcase.subtitle}</p>
           </Reveal>
 
           <Reveal delay={0.12}>
@@ -75,11 +75,11 @@ export default function AppShowcase() {
               href="#download"
               className="mt-10 inline-flex w-fit items-center justify-center rounded-full bg-graphite px-9 py-3.5 text-sm font-bold text-white transition-colors hover:bg-charcoal active:scale-[0.98] sm:mt-12"
             >
-              Get the App
+              {t.landing.appShowcase.getApp}
             </a>
           </Reveal>
 
-          <HandNote lines={["Good", "Food", "Happens", "Here"]} arrow={false} className="mt-8 -rotate-6 text-[1.65rem] leading-[0.9] sm:mt-10 sm:text-[1.85rem]" />
+          <HandNote lines={t.landing.appShowcase.handNote} arrow={false} className="mt-8 -rotate-6 text-[1.65rem] leading-[0.9] sm:mt-10 sm:text-[1.85rem]" />
         </div>
       </div>
 

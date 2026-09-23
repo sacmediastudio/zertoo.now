@@ -3,8 +3,11 @@
 import { motion } from "framer-motion";
 import { HandNote } from "./hand-note";
 import StoreBadges from "./store-badges";
+import { useLang } from "@/lib/lang-context";
 
 export default function Hero() {
+  const { t } = useLang();
+
   return (
     <section className="overflow-hidden bg-lime">
       <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 pb-16 pt-8 lg:grid-cols-2 lg:pb-20 lg:pt-12">
@@ -15,7 +18,7 @@ export default function Hero() {
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="text-xs font-bold uppercase tracking-[0.25em] text-graphite"
           >
-            Good food. Great places.
+            {t.landing.hero.eyebrow}
           </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: 24 }}
@@ -23,7 +26,7 @@ export default function Hero() {
             transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
             className="mt-4 max-w-xl text-5xl font-extrabold leading-[0.95] tracking-tight text-graphite sm:text-6xl xl:text-7xl"
           >
-            Find your next favorite <span className="text-coral">spot.</span>
+            {t.landing.hero.titlePrefix} <span className="text-coral">{t.landing.hero.titleHighlight}</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 24 }}
@@ -31,7 +34,7 @@ export default function Hero() {
             transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
             className="mt-6 max-w-md text-lg font-medium text-charcoal"
           >
-            Menus, places, deals and more. All in one app.
+            {t.landing.hero.subtitle}
           </motion.p>
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}>
             <StoreBadges className="mt-9" />
@@ -61,7 +64,7 @@ export default function Hero() {
             transition={{ duration: 0.7, delay: 0.15, ease: "easeOut" }}
             className="mx-auto w-full max-w-xl lg:max-w-none lg:scale-110"
           />
-          <HandNote lines={["Good Food", "Closer", "to You"]} className="absolute right-0 top-0 rotate-6 text-2xl sm:text-3xl lg:-right-2" />
+          <HandNote lines={t.landing.hero.handNote} className="absolute right-0 top-0 rotate-6 text-2xl sm:text-3xl lg:-right-2" />
         </div>
       </div>
     </section>

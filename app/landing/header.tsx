@@ -3,22 +3,25 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Menu, X } from "lucide-react";
+import { useLang } from "@/lib/lang-context";
+import LangSwitch from "@/components/lang-switch";
 
 const WEBAPP_URL = "https://app.zertooeats.com";
 const BUSINESS_URL = "https://zertoo.app";
 
-// Los nav links del diseño original (Restaurants/How it works/For
-// Business/About) eran anclas de una sola página — acá van a los
-// destinos reales que pidió el negocio: la app web, el panel de
-// negocios y contacto.
-const NAV_LINKS = [
-  { label: "App Web", href: WEBAPP_URL },
-  { label: "Zertoo Businesses", href: BUSINESS_URL },
-  { label: "Contact", href: "#contact" },
-];
-
 export default function LandingHeader() {
   const [open, setOpen] = useState(false);
+  const { t } = useLang();
+
+  // Los nav links del diseño original (Restaurants/How it works/For
+  // Business/About) eran anclas de una sola página — acá van a los
+  // destinos reales que pidió el negocio: la app web, el panel de
+  // negocios y contacto.
+  const NAV_LINKS = [
+    { label: t.landing.nav.webApp, href: WEBAPP_URL },
+    { label: t.landing.nav.business, href: BUSINESS_URL },
+    { label: t.landing.nav.contact, href: "#contact" },
+  ];
 
   return (
     <header className="bg-lime">
@@ -37,8 +40,9 @@ export default function LandingHeader() {
             href="#download"
             className="rounded-full bg-graphite px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-charcoal active:scale-[0.98]"
           >
-            Get the App
+            {t.landing.nav.getApp}
           </a>
+          <LangSwitch />
         </nav>
 
         <button
@@ -72,8 +76,11 @@ export default function LandingHeader() {
             onClick={() => setOpen(false)}
             className="mt-3 block rounded-full bg-graphite px-6 py-3.5 text-center text-sm font-bold text-white"
           >
-            Get the App
+            {t.landing.nav.getApp}
           </a>
+          <div className="mt-4 flex justify-center">
+            <LangSwitch />
+          </div>
         </nav>
       ) : null}
     </header>

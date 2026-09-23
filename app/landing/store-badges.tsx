@@ -1,4 +1,7 @@
+"use client";
+
 import { Apple, Play } from "lucide-react";
+import { useLang } from "@/lib/lang-context";
 
 // A diferencia del diseño original (que apuntaba ambos botones a un
 // ancla "#download" en la misma página), acá van directo a la ficha
@@ -9,6 +12,8 @@ const APP_STORE_URL = "https://apps.apple.com/app/id6814007959";
 const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=app.zertoo.eats";
 
 export default function StoreBadges({ className = "" }: { className?: string }) {
+  const { t } = useLang();
+
   return (
     <div className={`flex flex-wrap items-center gap-4 ${className}`}>
       <a
@@ -19,8 +24,8 @@ export default function StoreBadges({ className = "" }: { className?: string }) 
       >
         <Apple className="h-7 w-7" fill="currentColor" strokeWidth={0} />
         <span className="text-left leading-tight">
-          <span className="block text-[10px] font-medium uppercase tracking-wide text-white/80">Download on the</span>
-          <span className="block text-lg font-bold">App Store</span>
+          <span className="block text-[10px] font-medium uppercase tracking-wide text-white/80">{t.landing.storeBadges.appStoreLine1}</span>
+          <span className="block text-lg font-bold">{t.landing.storeBadges.appStoreLine2}</span>
         </span>
       </a>
       <a
@@ -31,8 +36,8 @@ export default function StoreBadges({ className = "" }: { className?: string }) 
       >
         <Play className="h-6 w-6" fill="currentColor" strokeWidth={0} />
         <span className="text-left leading-tight">
-          <span className="block text-[10px] font-medium uppercase tracking-wide text-white/80">Get it on</span>
-          <span className="block text-lg font-bold">Google Play</span>
+          <span className="block text-[10px] font-medium uppercase tracking-wide text-white/80">{t.landing.storeBadges.playStoreLine1}</span>
+          <span className="block text-lg font-bold">{t.landing.storeBadges.playStoreLine2}</span>
         </span>
       </a>
     </div>

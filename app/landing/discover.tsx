@@ -2,8 +2,11 @@
 
 import { motion } from "framer-motion";
 import { Reveal } from "./reveal";
+import { useLang } from "@/lib/lang-context";
 
 export default function Discover() {
+  const { t } = useLang();
+
   return (
     <section id="restaurants" className="overflow-hidden bg-graphite py-20 lg:py-28">
       <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 lg:grid-cols-2">
@@ -36,16 +39,14 @@ export default function Discover() {
           </svg>
           <Reveal>
             <h2 className="text-4xl font-extrabold leading-[1.02] tracking-tight text-white sm:text-5xl xl:text-6xl">
-              Discover more. <span className="text-coral">Eat better.</span>
+              {t.landing.discover.titlePrefix} <span className="text-coral">{t.landing.discover.titleHighlight}</span>
             </h2>
-            <p className="mt-5 max-w-md font-medium text-white/75">
-              From local favorites to hidden gems, ZertooEats brings the best of Aruba right to your fingertips.
-            </p>
+            <p className="mt-5 max-w-md font-medium text-white/75">{t.landing.discover.subtitle}</p>
             <a
               href="https://app.zertooeats.com"
               className="mt-9 inline-block rounded-full bg-white px-8 py-4 text-sm font-bold text-graphite transition-colors hover:bg-lime active:scale-[0.98]"
             >
-              Explore Restaurants
+              {t.landing.discover.cta}
             </a>
           </Reveal>
         </div>

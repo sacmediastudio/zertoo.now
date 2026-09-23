@@ -1,24 +1,29 @@
+"use client";
+
 import { Beef, Coffee, Fish, Martini, Pizza, UtensilsCrossed, type LucideIcon } from "lucide-react";
 import { Reveal } from "./reveal";
-
-const CATEGORIES: { label: string; icon: LucideIcon }[] = [
-  { label: "Burgers", icon: Beef },
-  { label: "Pizza", icon: Pizza },
-  { label: "Sushi", icon: Fish },
-  { label: "Bars", icon: Martini },
-  { label: "Cafés", icon: Coffee },
-  { label: "And more", icon: UtensilsCrossed },
-];
+import { useLang } from "@/lib/lang-context";
 
 export default function Categories() {
+  const { t } = useLang();
+
+  const CATEGORIES: { label: string; icon: LucideIcon }[] = [
+    { label: t.landing.categories.burgers, icon: Beef },
+    { label: t.landing.categories.pizza, icon: Pizza },
+    { label: t.landing.categories.sushi, icon: Fish },
+    { label: t.landing.categories.bars, icon: Martini },
+    { label: t.landing.categories.cafes, icon: Coffee },
+    { label: t.landing.categories.more, icon: UtensilsCrossed },
+  ];
+
   return (
     <section className="bg-gray-100 py-20 lg:py-24">
       <div className="mx-auto flex max-w-7xl flex-col gap-12 px-6 lg:flex-row lg:items-center lg:justify-between">
         <Reveal className="max-w-sm">
           <h2 className="text-4xl font-extrabold leading-[1.02] tracking-tight text-graphite sm:text-5xl">
-            Everything you crave, <span className="text-coral">right here.</span>
+            {t.landing.categories.titlePrefix} <span className="text-coral">{t.landing.categories.titleHighlight}</span>
           </h2>
-          <p className="mt-5 font-medium text-charcoal/75">Explore restaurants by category, see menus, find deals and get directions.</p>
+          <p className="mt-5 font-medium text-charcoal/75">{t.landing.categories.subtitle}</p>
         </Reveal>
 
         <Reveal delay={0.15}>
