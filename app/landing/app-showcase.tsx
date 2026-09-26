@@ -18,10 +18,16 @@ export default function AppShowcase() {
 
   return (
     <section id="how-it-works" className="relative overflow-hidden bg-cream">
-      {/* Forma lima de marca — entra desde abajo-izquierda detrás del teléfono */}
+      {/* Forma lima de marca — entra desde abajo-izquierda detrás del teléfono.
+          Alto/posición en % SOLO desde lg (donde el grid realmente pasa a
+          2 columnas y la sección queda corta y predecible). Entre el
+          breakpoint base y lg (mobile Y tablet: el layout sigue apilado
+          en una sola columna hasta lg, no desde sm) la sección se estira
+          mucho más de lo que el min-h sugiere, así que ahí va un alto y
+          offset fijos — si no, el % explotaba a mucho más de lo esperado. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-[18%] -left-[12%] z-0 h-[70%] w-[55%] rounded-[50%] bg-lime sm:-bottom-[22%] sm:-left-[8%] sm:w-[48%] lg:h-[78%] lg:w-[42%]"
+        className="pointer-events-none absolute -bottom-10 -left-[12%] z-0 h-[34rem] w-[55%] rounded-[50%] bg-lime sm:-left-[8%] sm:w-[48%] lg:-bottom-[22%] lg:h-[78%] lg:w-[42%]"
       />
 
       <div className="relative z-10 mx-auto grid min-h-[36rem] max-w-[90rem] items-stretch gap-8 px-6 pb-0 pt-16 sm:pt-20 lg:min-h-[42rem] lg:grid-cols-[minmax(0,0.47fr)_minmax(0,0.53fr)] lg:gap-6 lg:px-10 lg:pt-24 xl:px-16">
@@ -57,14 +63,20 @@ export default function AppShowcase() {
             <p className="mt-5 max-w-md text-base font-medium leading-relaxed text-charcoal/80 sm:text-lg">{t.landing.appShowcase.subtitle}</p>
           </Reveal>
 
+          {/* Una sola fila de 4, incluso en mobile — a propósito, no un
+              grid de 2x2: con la forma lima de fondo cubriendo solo la
+              mitad izquierda, un grid 2x2 dejaba 2 iconos sobre el lima y
+              2 sobre el fondo crema, con un corte visual justo en el medio
+              que se veía desprolijo. En una sola fila, los 4 quedan
+              consistentes contra el mismo borde de la forma. */}
           <Reveal delay={0.12}>
-            <ul className="mt-10 flex max-w-lg flex-wrap justify-between gap-y-6 sm:mt-12 sm:flex-nowrap sm:gap-x-2 lg:max-w-xl lg:gap-x-4">
+            <ul className="mt-10 flex max-w-lg justify-between gap-x-1.5 sm:mt-12 sm:gap-x-2 lg:max-w-xl lg:gap-x-4">
               {APP_FEATURES.map(({ label, icon: Icon }) => (
-                <li key={label} className="flex w-[46%] flex-col items-center gap-2.5 text-center sm:w-auto sm:flex-1">
-                  <span className="grid h-[3.75rem] w-[3.75rem] place-items-center rounded-full border-[1.5px] border-coral bg-transparent sm:h-16 sm:w-16">
-                    <Icon className="h-[1.35rem] w-[1.35rem] text-coral sm:h-6 sm:w-6" strokeWidth={1.6} />
+                <li key={label} className="flex flex-1 flex-col items-center gap-2 text-center sm:gap-2.5">
+                  <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full border-[1.5px] border-coral bg-transparent sm:h-16 sm:w-16">
+                    <Icon className="h-[1.1rem] w-[1.1rem] text-coral sm:h-6 sm:w-6" strokeWidth={1.6} />
                   </span>
-                  <span className="max-w-[5.5rem] text-[0.7rem] font-semibold leading-snug text-charcoal sm:text-xs">{label}</span>
+                  <span className="max-w-[4.75rem] text-[0.65rem] font-semibold leading-snug text-charcoal sm:max-w-[5.5rem] sm:text-xs">{label}</span>
                 </li>
               ))}
             </ul>
@@ -83,7 +95,14 @@ export default function AppShowcase() {
         </div>
       </div>
 
-      {/* Plato de pasta — grande, abajo a la derecha, parcialmente cortado */}
+      {/* Plato de pasta — grande, abajo a la derecha, parcialmente cortado.
+          Offset fijo hasta lg a propósito (ver el comentario de la forma
+          lima arriba): con -bottom en %, la sección apilada (mobile Y
+          tablet — el grid no pasa a 2 columnas hasta lg) es tan alta que
+          el plato terminaba empujado cientos de píxeles por debajo del
+          borde de la sección — y como la sección tiene overflow-hidden,
+          quedaba completamente invisible en vez de "asomado" como se ve
+          recién en desktop, que es donde el % sí tiene sentido. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <motion.img
         src="/landing/pasta-plate.webp"
@@ -94,7 +113,7 @@ export default function AppShowcase() {
         whileInView={{ opacity: 1, x: 0, rotate: 6 }}
         viewport={{ once: true, margin: "-20px" }}
         transition={{ duration: 0.75, ease: "easeOut" }}
-        className="pointer-events-none absolute -bottom-[18%] -right-[8%] z-10 w-[72%] max-w-none sm:-bottom-[22%] sm:-right-[6%] sm:w-[55%] lg:-bottom-[28%] lg:-right-[4%] lg:w-[38%] xl:w-[40%]"
+        className="pointer-events-none absolute -bottom-8 -right-[8%] z-10 w-[72%] max-w-none sm:-right-[6%] sm:w-[55%] lg:-bottom-[28%] lg:-right-[4%] lg:w-[38%] xl:w-[40%]"
       />
     </section>
   );
