@@ -17,6 +17,18 @@ const config: Config = {
         coral: "#dd5152",
         charcoal: "#2D2B2C",
         cream: "#FCFCF7",
+        // Paleta de la app de consumidor (mismos valores que la app nativa).
+        eats: {
+          header: "#e4f73e",
+          bg: "#F5F5F5",
+          chip: "#F7F8F4",
+          secondary: "#0a2808",
+          promo: "#FF7A1A",
+          special: "#E5352B",
+          open: "#1E8E3E",
+          amber: "#C98A00",
+          whatsapp: "#25D366",
+        },
       },
     },
   },

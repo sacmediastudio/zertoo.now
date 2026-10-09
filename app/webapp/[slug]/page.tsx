@@ -1,19 +1,22 @@
-import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { db } from "@/lib/db";
-import BusinessDetail from "./business-detail";
+import BusinessDetailScreen from "./business-detail-screen";
 
 export const dynamic = "force-dynamic";
 
+// Los datos de la pantalla se cargan en el navegador (misma API que la
+// app nativa); acá solo se arman los metadatos para que al compartir el
+// link por WhatsApp/redes salga la foto y el nombre del negocio.
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const tenant = await db.tenant.findUnique({
-    where: { slug: params.slug },
-    select: { name: true, logoUrl: true, heroImageUrl: true, nowEnabled: true },
-  });
-  if (!tenant || !tenant.nowEnabled) return { title: "Zertoo Eats!" };
+  // Misma API pública que usa la pantalla (y la app nativa), consultada
+  // desde el servidor — la web ya no necesita acceso propio a la base.
+  const res = await fetch(`https://zertoo.app/api/public/eats/${encodeURIComponent(params.slug)}`, { cache: "no-store" }).catch(
+    () => null
+  );
+  if (!res?.ok) return { title: "Zertoo Eats!" };
+  const tenant: { name: string; logoUrl: string | null; heroImageUrl: string | null } = await res.json();
 
   const title = `${tenant.name} | Zertoo Eats!`;
-  const description = `Mirá ${tenant.name} en Zertoo Eats — recomendaciones, calificación y cómo llegar.`;
+  const description = `Mira ${tenant.name} en Zertoo Eats — recomendaciones, calificación y cómo llegar.`;
   const image = tenant.heroImageUrl || tenant.logoUrl || undefined;
 
   return {
@@ -24,32 +27,6 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function BusinessPage({ params }: { params: { slug: string } }) {
-  const tenant = await db.tenant.findUnique({
-    where: { slug: params.slug },
-    include: { reviews: { where: { status: "PUBLISHED" } } },
-  });
-  if (!tenant || !tenant.nowEnabled) notFound();
-
-  const avgRating =
-    tenant.reviews.length > 0 ? tenant.reviews.reduce((sum, r) => sum + r.rating, 0) / tenant.reviews.length : null;
-
-  return (
-    <BusinessDetail
-      tenant={{
-        slug: tenant.slug,
-        name: tenant.name,
-        logoUrl: tenant.logoUrl,
-        heroImageUrl: tenant.heroImageUrl,
-        nowCategory: tenant.nowCategory,
-        address: tenant.address,
-        contactPhone: tenant.contactPhone,
-        latitude: tenant.latitude,
-        longitude: tenant.longitude,
-        googleMapsUrl: tenant.googleMapsUrl,
-      }}
-      avgRating={avgRating}
-      reviewCount={tenant.reviews.length}
-    />
-  );
+export default function BusinessPage({ params }: { params: { slug: string } }) {
+  return <BusinessDetailScreen slug={params.slug} />;
 }

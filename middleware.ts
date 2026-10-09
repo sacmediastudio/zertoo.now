@@ -15,6 +15,10 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isAppSubdomain = hostname.startsWith("app.");
 
+  // El proxy de la API pública (ver rewrites en next.config.js) tiene
+  // que pasar tal cual en cualquiera de los dos subdominios.
+  if (pathname.startsWith("/eats-api/")) return NextResponse.next();
+
   if (isAppSubdomain) {
     const url = request.nextUrl.clone();
     url.pathname = `/webapp${pathname === "/" ? "" : pathname}`;

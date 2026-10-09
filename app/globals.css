@@ -68,3 +68,24 @@ body {
 .no-scrollbar {
   scrollbar-width: none;
 }
+
+/* Pulso del botón "Cerca de mí" (mismo ritmo que la app nativa): cada
+   ~4.5s crece un poco y se tiñe de lima un instante. */
+@keyframes near-pulse {
+  0%,
+  77% {
+    transform: scale(1);
+    background-color: rgba(255, 255, 255, 0.4);
+  }
+  88% {
+    transform: scale(1.08);
+    background-color: #e7ff00;
+  }
+  100% {
+    transform: scale(1);
+    background-color: rgba(255, 255, 255, 0.4);
+  }
+}
+.animate-near-pulse {
+  animation: near-pulse 4.5s ease-in-out infinite;
+}
