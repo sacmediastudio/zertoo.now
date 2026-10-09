@@ -3,10 +3,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLang } from "@/lib/lang-context";
-import { fetchListings, type ListingsResponse } from "@/lib/eats-api";
+import { fetchListings, fetchReels, getDeviceId, type ListingsResponse, type Reel } from "@/lib/eats-api";
 import BusinessCard from "./_components/business-card";
 import FeaturedGrid from "./_components/featured-grid";
 import SpotlightCarousel from "./_components/spotlight-carousel";
+import ReelsCarousel from "./_components/reels-carousel";
+import ReelViewer from "./_components/reel-viewer";
 import SecondaryCategoryGrid from "./_components/secondary-category-grid";
 import SelectSheet from "./_components/select-sheet";
 import FoodPeekImage from "./_components/food-peek-image";
@@ -24,6 +26,8 @@ export default function HomeScreen() {
   const [category, setCategory] = useState<string | null>(null);
   const [secondaryCategory, setSecondaryCategory] = useState<string | null>(null);
   const [priceRange, setPriceRange] = useState<string | null>(null);
+  const [reels, setReels] = useState<Reel[]>([]);
+  const [viewerIndex, setViewerIndex] = useState<number | null>(null);
   const [query, setQuery] = useState("");
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
 
@@ -56,6 +60,19 @@ export default function HomeScreen() {
     const timeout = setTimeout(load, query ? 300 : 0);
     return () => clearTimeout(timeout);
   }, [load, query]);
+
+  // Los reels no dependen de los filtros: se cargan al abrir y al cerrar el
+  // visor (para refrescar los "me gusta").
+  const loadReels = useCallback(async () => {
+    try {
+      setReels(await fetchReels(getDeviceId()));
+    } catch {
+      // sin reels el carrusel simplemente no se muestra
+    }
+  }, []);
+  useEffect(() => {
+    loadReels();
+  }, [loadReels]);
 
   const openBusiness = (slug: string) => router.push(`/${slug}`);
 
@@ -139,6 +156,8 @@ export default function HomeScreen() {
 
           <SecondaryCategoryGrid value={secondaryCategory} onChange={setSecondaryCategory} />
 
+          <ReelsCarousel reels={reels} onPress={setViewerIndex} />
+
           {!!data?.spotlight.length && <SpotlightCarousel businesses={data.spotlight} onPress={openBusiness} />}
 
           {loading && (
@@ -182,6 +201,17 @@ export default function HomeScreen() {
 
         <p className="py-4 text-center text-[11px] text-graphite/50">{t.footer}</p>
       </main>
+
+      {viewerIndex !== null && (
+        <ReelViewer
+          reels={reels}
+          startIndex={viewerIndex}
+          onClose={() => {
+            setViewerIndex(null);
+            loadReels();
+          }}
+        />
+      )}
 
       <BottomNavBar
         onHomePress={() => window.scrollTo({ top: 0, behavior: "smooth" })}

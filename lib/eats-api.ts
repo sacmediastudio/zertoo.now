@@ -183,3 +183,62 @@ export async function deleteLoyaltyAccount(email: string, token: string): Promis
   });
   if (!res.ok) throw new Error(await parseErrorMessage(res, "No se pudo eliminar la cuenta."));
 }
+
+// ---------- Reels ----------
+
+export interface ReelBusiness {
+  slug: string;
+  name: string;
+  logoUrl: string | null;
+  tagline: string | null;
+  address: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  googleMapsUrl: string | null;
+  menuUrl: string;
+}
+
+export interface Reel {
+  id: string;
+  videoUrl: string;
+  posterUrl: string;
+  durationSec: number;
+  width: number;
+  height: number;
+  caption: string | null;
+  likes: number;
+  liked: boolean;
+  business: ReelBusiness;
+}
+
+// Identificador anónimo del navegador (sin cuenta) — un "me gusta" por reel.
+export function getDeviceId(): string {
+  const key = "zertoo_device_id";
+  try {
+    let id = window.localStorage.getItem(key);
+    if (!id) {
+      id = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}-${Math.random().toString(36).slice(2, 12)}`;
+      window.localStorage.setItem(key, id);
+    }
+    return id;
+  } catch {
+    return "anon-session";
+  }
+}
+
+export async function fetchReels(deviceId: string): Promise<Reel[]> {
+  const res = await fetch(`${API_BASE}/reels?deviceId=${encodeURIComponent(deviceId)}`);
+  if (!res.ok) throw new Error(`reels failed: ${res.status}`);
+  const body = await res.json();
+  return body.reels as Reel[];
+}
+
+export async function toggleReelLike(reelId: string, deviceId: string): Promise<{ liked: boolean; likes: number }> {
+  const res = await fetch(`${API_BASE}/reels/${encodeURIComponent(reelId)}/like`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ deviceId }),
+  });
+  if (!res.ok) throw new Error(`like failed: ${res.status}`);
+  return res.json();
+}

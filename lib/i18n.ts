@@ -76,6 +76,14 @@ export const translations = {
       bookNow: "Reservar ahora",
       shareText: (name: string) => `Mira ${name} en Zertoo Eats`,
     },
+    reels: {
+      title: "Reels",
+      likeLabel: "Me gusta",
+      shareLabel: "Compartir",
+      locationLabel: "Cómo llegar",
+      close: "Cerrar",
+      linkCopied: "Enlace copiado",
+    },
     errors: {
       loadFailed: "No pudimos cargar los restaurantes. Revisa tu conexión.",
       retry: "Reintentar",
@@ -237,6 +245,14 @@ export const translations = {
       share: "Share",
       bookNow: "Book now",
       shareText: (name: string) => `Check out ${name} on Zertoo Eats`,
+    },
+    reels: {
+      title: "Reels",
+      likeLabel: "Like",
+      shareLabel: "Share",
+      locationLabel: "Directions",
+      close: "Close",
+      linkCopied: "Link copied",
     },
     errors: {
       loadFailed: "We couldn't load restaurants. Check your connection.",
