@@ -89,3 +89,14 @@ body {
 .animate-near-pulse {
   animation: near-pulse 4.5s ease-in-out infinite;
 }
+
+/* iOS Safari hace zoom automático al enfocar un campo con letra menor a
+   16px (al abrirse el teclado) y no vuelve solo. Con 16px en celular ese
+   zoom no ocurre, y se conserva el zoom manual con los dedos (accesibilidad). */
+@media (max-width: 768px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
