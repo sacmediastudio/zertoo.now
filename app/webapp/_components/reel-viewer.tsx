@@ -9,8 +9,9 @@ import TintIcon from "./tint-icon";
 const SHADOW = "[text-shadow:0_1px_4px_rgba(0,0,0,0.55)]";
 
 function HeartIcon({ filled }: { filled: boolean }) {
+  if (!filled) return <TintIcon src="/nav/icons8-me-gusta-48.png" size={34} color="#fff" />;
   return (
-    <svg width="34" height="34" viewBox="0 0 24 24" fill={filled ? "#ff3b5c" : "none"} stroke={filled ? "#ff3b5c" : "#fff"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="34" height="34" viewBox="0 0 24 24" fill="#ff3b5c" stroke="#ff3b5c" strokeWidth="2" strokeLinejoin="round">
       <path d="M12 21s-7.5-4.6-9.6-9.4C.9 8 3 4.5 6.5 4.5c2 0 3.6 1 5.5 3 1.9-2 3.5-3 5.5-3C21 4.5 23.1 8 21.6 11.6 19.5 16.4 12 21 12 21z" />
     </svg>
   );
