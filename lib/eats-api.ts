@@ -147,24 +147,55 @@ async function parseErrorMessage(res: Response, fallback: string): Promise<strin
   return fallback;
 }
 
-export async function requestLoyaltyCode(email: string): Promise<void> {
-  const res = await fetch(`${API_BASE}/loyalty-account/request-code`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email }),
-  });
-  if (!res.ok) throw new Error(await parseErrorMessage(res, "No se pudo enviar el código."));
+// Error de la API con el `code` opcional que manda el servidor (ej.
+// "UNVERIFIED" cuando el correo todavía no se confirmó).
+export class ApiError extends Error {
+  code?: string;
+  status: number;
+  constructor(message: string, status: number, code?: string) {
+    super(message);
+    this.status = status;
+    this.code = code;
+  }
 }
 
-export async function confirmLoyaltyCode(email: string, code: string): Promise<string> {
-  const res = await fetch(`${API_BASE}/loyalty-account/confirm`, {
+async function postAccount<T>(path: string, body: unknown, fallback: string): Promise<T> {
+  const res = await fetch(`${API_BASE}/account/${path}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, code }),
+    body: JSON.stringify(body),
   });
-  if (!res.ok) throw new Error(await parseErrorMessage(res, "No se pudo confirmar el código."));
-  const body = await res.json();
-  return body.accessToken as string;
+  let data: { error?: unknown; code?: string } | null = null;
+  try {
+    data = await res.json();
+  } catch {}
+  if (!res.ok) throw new ApiError(typeof data?.error === "string" ? data.error : fallback, res.status, data?.code);
+  return data as T;
+}
+
+export interface AccountSession {
+  accessToken: string;
+  name: string | null;
+}
+
+export function registerAccount(p: { name: string; email: string; password: string; lang: "es" | "en" }) {
+  return postAccount<{ ok: true }>("register", { ...p, language: p.lang }, "No se pudo crear la cuenta.");
+}
+
+export function verifyAccount(email: string, code: string) {
+  return postAccount<AccountSession>("verify", { email, code }, "No se pudo confirmar el código.");
+}
+
+export function loginAccount(email: string, password: string, lang: "es" | "en") {
+  return postAccount<AccountSession>("login", { email, password, language: lang }, "No se pudo iniciar sesión.");
+}
+
+export function requestPasswordReset(email: string, lang: "es" | "en") {
+  return postAccount<{ ok: true }>("forgot", { email, language: lang }, "No se pudo enviar el código.");
+}
+
+export function resetPassword(email: string, code: string, password: string) {
+  return postAccount<AccountSession>("reset", { email, code, password }, "No se pudo cambiar la contraseña.");
 }
 
 export async function fetchMyLoyaltyCards(email: string, token: string): Promise<MyLoyaltyCard[]> {

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useLang } from "@/lib/lang-context";
 import { fetchMyLoyaltyCards, type MyLoyaltyCard } from "@/lib/eats-api";
 import { useLoyaltyAccount } from "@/lib/loyalty-account";
-import AccountVerificationForm from "../../_components/account-verification-form";
+import AuthForm from "../../_components/auth-form";
 
 // Port web de MyLoyaltyScreen de la app nativa ("Mis sellos").
 export default function MyLoyaltyScreen() {
@@ -51,18 +51,7 @@ export default function MyLoyaltyScreen() {
 
       <main className="mx-auto flex max-w-xl flex-col gap-3.5 p-5">
         {loyaltyAccount.step !== "verified" ? (
-          <AccountVerificationForm
-            step={loyaltyAccount.step}
-            email={loyaltyAccount.email}
-            setEmail={loyaltyAccount.setEmail}
-            code={loyaltyAccount.code}
-            setCode={loyaltyAccount.setCode}
-            loading={loyaltyAccount.loading}
-            error={loyaltyAccount.error}
-            onSendCode={loyaltyAccount.sendCode}
-            onConfirmCode={() => loyaltyAccount.confirmCode()}
-            introText={t.loyalty.subtitle}
-          />
+          <AuthForm account={loyaltyAccount} introText={t.loyalty.subtitle} />
         ) : (
           <>
             {loadingCards && (
@@ -100,8 +89,8 @@ export default function MyLoyaltyScreen() {
               })}
 
             {cardsError && <p className="text-xs text-eats-special">{cardsError}</p>}
-            <button type="button" onClick={loyaltyAccount.changeEmail} className="mt-2 text-center text-[13px] font-semibold text-graphite/60">
-              {t.loyalty.changeEmail}
+            <button type="button" onClick={loyaltyAccount.logout} className="mt-2 text-center text-[13px] font-semibold text-graphite/60">
+              {t.profile.logout}
             </button>
           </>
         )}

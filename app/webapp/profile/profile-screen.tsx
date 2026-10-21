@@ -6,10 +6,9 @@ import { useRouter } from "next/navigation";
 import { useLang } from "@/lib/lang-context";
 import { subscribe } from "@/lib/eats-api";
 import { useLoyaltyAccount } from "@/lib/loyalty-account";
-import AccountVerificationForm from "../_components/account-verification-form";
+import AuthForm from "../_components/auth-form";
 
 const STORAGE_KEY = "zertoo_profile";
-const INPUT = "w-full rounded-xl border border-graphite/10 bg-white px-3.5 py-3 text-sm text-graphite outline-none placeholder:text-graphite/50";
 
 // Port web de ProfileScreen de la app nativa. Los avisos push de
 // promos/specials solo existen en la app móvil.
@@ -17,37 +16,21 @@ export default function ProfileScreen() {
   const { lang, t } = useLang();
   const router = useRouter();
   const loyaltyAccount = useLoyaltyAccount();
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      const stored = JSON.parse(raw) as { name?: string; phone?: string };
-      setName(stored.name ?? "");
-      setPhone(stored.phone ?? "");
-    } catch {
-      // datos corruptos: se ignora y arranca en blanco
-    }
-  }, []);
-
   // Se llama una sola vez, apenas se confirma el código (registro inicial).
-  async function registerSubscription(email: string) {
+  async function registerSubscription(email: string, name: string | null) {
     setError(null);
     setSaved(false);
     try {
       await subscribe({
-        name: name.trim() || undefined,
+        name: name?.trim() || undefined,
         email,
-        phone: phone.trim() || undefined,
         notificationsEnabled: false,
         lang,
       });
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ name, phone }));
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } catch {
@@ -60,8 +43,6 @@ export default function ProfileScreen() {
     try {
       await loyaltyAccount.deleteAccount();
       window.localStorage.removeItem(STORAGE_KEY);
-      setName("");
-      setPhone("");
     } catch {
       setError(t.profile.deleteAccountFailed);
     }
@@ -85,41 +66,17 @@ export default function ProfileScreen() {
 
       <main className="mx-auto flex max-w-xl flex-col gap-4 p-5">
         {loyaltyAccount.step !== "verified" ? (
-          <AccountVerificationForm
-            step={loyaltyAccount.step}
-            email={loyaltyAccount.email}
-            setEmail={loyaltyAccount.setEmail}
-            code={loyaltyAccount.code}
-            setCode={loyaltyAccount.setCode}
-            loading={loyaltyAccount.loading}
-            error={loyaltyAccount.error}
-            onSendCode={loyaltyAccount.sendCode}
-            onConfirmCode={() => loyaltyAccount.confirmCode((account) => registerSubscription(account.email))}
+          <AuthForm
+            account={loyaltyAccount}
             introText={t.profile.verifyIntro}
-            canSubmit={name.trim().length > 0}
-            sendCodeLabel={t.profile.save}
-            footerHint={t.profile.registerHint}
-            beforeEmail={
-              <label className="flex flex-col gap-1.5">
-                <span className="text-xs font-semibold text-graphite/60">{t.profile.name}</span>
-                <input value={name} onChange={(e) => setName(e.target.value)} placeholder={t.profile.namePlaceholder} className={INPUT} />
-              </label>
-            }
-            afterEmail={
-              <label className="flex flex-col gap-1.5">
-                <span className="text-xs font-semibold text-graphite/60">{t.profile.phone}</span>
-                <input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder={t.profile.phonePlaceholder}
-                  className={INPUT}
-                />
-              </label>
-            }
+            onVerified={(account) => registerSubscription(account.email, account.name)}
           />
         ) : (
           <>
+            {loyaltyAccount.account?.name && (
+              <p className="text-lg font-bold text-graphite">{t.profile.hello(loyaltyAccount.account.name)}</p>
+            )}
+
             <Link
               href="/profile/loyalty"
               className="flex items-center justify-between rounded-xl bg-white px-3.5 py-3.5 text-sm font-semibold text-graphite"
@@ -132,6 +89,14 @@ export default function ProfileScreen() {
 
             {error && <p className="text-xs text-eats-special">{error}</p>}
             {saved && <p className="text-xs font-semibold text-graphite">{t.profile.saved}</p>}
+
+            <button
+              type="button"
+              onClick={loyaltyAccount.logout}
+              className="rounded-[14px] border border-graphite/10 bg-white py-3.5 text-sm font-bold text-graphite"
+            >
+              {t.profile.logout}
+            </button>
 
             <button
               type="button"
