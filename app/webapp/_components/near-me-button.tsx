@@ -47,17 +47,18 @@ export default function NearMeButton({
         type="button"
         onClick={handlePress}
         disabled={loading}
-        className={`relative flex items-center gap-1.5 overflow-hidden rounded-full px-3 py-[7px] text-xs font-semibold ${
+        aria-label={loading ? t.nearMe.searching : active ? t.nearMe.activeLabel : t.nearMe.label}
+        aria-pressed={active}
+        className={`relative flex h-9 w-11 items-center justify-center overflow-hidden rounded-full text-xs font-semibold ${
           loading ? "opacity-60" : ""
         } ${active ? "bg-lime text-graphite" : "animate-near-pulse border border-white/50 bg-white/40 text-graphite/60 backdrop-blur-md"}`}
       >
         <TintIcon
-          src="/nav/icons8-marcador-48.png"
-          size={16}
+          src="/nav/marker.png"
+          size={20}
           color={active ? "#002D09" : "rgba(0,45,9,0.6)"}
           className="relative"
         />
-        <span className="relative">{loading ? t.nearMe.searching : active ? t.nearMe.activeLabel : t.nearMe.label}</span>
       </button>
       {error && <p className="px-1 text-[11px] text-red-600">{error}</p>}
     </div>

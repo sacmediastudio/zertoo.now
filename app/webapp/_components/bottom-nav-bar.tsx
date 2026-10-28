@@ -66,11 +66,11 @@ export default function BottomNavBar({
         <div className="mx-auto flex max-w-xl items-center justify-center gap-8">
           {reels.length > 0 && (
             <button type="button" onClick={openReels} aria-label={t.reels.title} className="p-1">
-              <TintIcon src="/nav/icons8-play-32.png" size={24} />
+              <TintIcon src="/nav/play.png" size={24} />
             </button>
           )}
           <button type="button" onClick={onHomePress} aria-label="Home" className="p-1">
-            <TintIcon src="/nav/icons8-casa-48.png" size={24} />
+            <TintIcon src="/nav/home.png" size={24} />
           </button>
           <NearMeButton
             active={nearMeActive}
@@ -79,7 +79,7 @@ export default function BottomNavBar({
             overridePress={onNearMePress}
           />
           <button type="button" onClick={onProfilePress} aria-label="Profile" className="p-1">
-            <TintIcon src="/nav/icono-user.png" size={24} />
+            <TintIcon src="/nav/user.png" size={24} />
           </button>
         </div>
       </nav>
