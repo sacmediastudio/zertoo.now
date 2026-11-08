@@ -1,18 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import { Facebook, Instagram, Music2, Youtube } from "lucide-react";
+import { Facebook, Instagram, Music2 } from "lucide-react";
 import { useLang } from "@/lib/lang-context";
 import LangSwitch from "@/components/lang-switch";
 
 const BUSINESS_URL = "https://zertoo.app";
 
-// YouTube sigue como placeholder ("#") hasta que haya canal real.
 const SOCIALS = [
   { label: "Instagram", href: "https://www.instagram.com/zertooeats/", icon: Instagram },
   { label: "Facebook", href: "https://www.facebook.com/zertooeats", icon: Facebook },
   { label: "TikTok", href: "https://www.tiktok.com/@zertooeats", icon: Music2 },
-  { label: "YouTube", href: "#", icon: Youtube },
 ];
 
 export default function LandingFooter() {
