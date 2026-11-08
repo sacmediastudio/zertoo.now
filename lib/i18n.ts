@@ -164,7 +164,7 @@ export const translations = {
     landing: {
       nav: {
         webApp: "App Web",
-        business: "Zertoo Businesses",
+        business: "Zertoo for Businesses",
         contact: "Contacto",
         getApp: "Descargar App",
       },
@@ -370,7 +370,7 @@ export const translations = {
     landing: {
       nav: {
         webApp: "Web App",
-        business: "Zertoo Businesses",
+        business: "Zertoo for Businesses",
         contact: "Contact",
         getApp: "Get the App",
       },

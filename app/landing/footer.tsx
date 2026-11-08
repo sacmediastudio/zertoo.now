@@ -7,12 +7,11 @@ import LangSwitch from "@/components/lang-switch";
 
 const BUSINESS_URL = "https://zertoo.app";
 
-// Sin perfiles reales todavía — quedan como placeholder visual (igual
-// que el diseño original) hasta que haya URLs de verdad para cargar acá.
+// YouTube sigue como placeholder ("#") hasta que haya canal real.
 const SOCIALS = [
-  { label: "Instagram", href: "#", icon: Instagram },
-  { label: "Facebook", href: "#", icon: Facebook },
-  { label: "TikTok", href: "#", icon: Music2 },
+  { label: "Instagram", href: "https://www.instagram.com/zertooeats/", icon: Instagram },
+  { label: "Facebook", href: "https://www.facebook.com/zertooeats", icon: Facebook },
+  { label: "TikTok", href: "https://www.tiktok.com/@zertooeats", icon: Music2 },
   { label: "YouTube", href: "#", icon: Youtube },
 ];
 
@@ -34,7 +33,12 @@ export default function LandingFooter() {
         <ul className="mt-8 flex items-center gap-6">
           {SOCIALS.map(({ label, href, icon: Icon }) => (
             <li key={label}>
-              <a href={href} aria-label={label} className="grid h-11 w-11 place-items-center rounded-full text-white/80 transition-colors hover:text-lime">
+              <a
+                href={href}
+                aria-label={label}
+                {...(href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                className="grid h-11 w-11 place-items-center rounded-full text-white/80 transition-colors hover:text-lime"
+              >
                 <Icon className="h-5 w-5" strokeWidth={1.8} />
               </a>
             </li>
