@@ -31,12 +31,12 @@ export default function StoreBadges({ className = "" }: { className?: string }) 
         rel="noopener noreferrer"
         className="flex flex-col items-center gap-2 transition-transform hover:-translate-y-0.5 active:scale-[0.98]"
       >
-        {/* El PNG oficial de Google trae margen transparente propio — los márgenes negativos lo compensan para que se vea del mismo alto que el de Apple. */}
+        {/* Los PNG de Google venían con margen transparente distinto en cada idioma (el de inglés mucho mayor), así que a la misma altura el inglés se veía más pequeño. Están recortados al borde del botón, y ahora ambos miden h-12 igual que el de Apple. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={`/badges/google-play-${suffix}.png`}
           alt={t.landing.storeBadges.playStoreAlt}
-          className="-my-2 h-[62px] w-auto select-none"
+          className="h-12 w-auto select-none"
           draggable={false}
         />
       </a>
